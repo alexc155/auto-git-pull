@@ -1,7 +1,9 @@
 "use strict";
 
-const { existsSync, writeFileSync } = require("fs");
+const { existsSync, writeFileSync, readFileSync } = require("fs");
 const { log } = require("../utils");
+
+const CONFIG_FILE = "./git-autofetch.config";
 
 function validateProjectsDirectory(path) {
   if (!existsSync(path)) {
@@ -11,12 +13,17 @@ function validateProjectsDirectory(path) {
   return true;
 }
 
-function writeConfig(path) {
+function writeConfig(setting, value) {
   try {
-    writeFileSync(
-      "./git-autofetch.config",
-      JSON.stringify({ projects_directory: path })
-    );
+    if (!existsSync(CONFIG_FILE)) {
+      writeFileSync(CONFIG_FILE, "{}");
+    }
+
+    let config = JSON.parse(readFileSync(CONFIG_FILE, { encoding: "utf8" }));
+
+    config[setting] = value;
+
+    writeFileSync(CONFIG_FILE, JSON.stringify(config));
     return true;
   } catch (error) {
     log.error(error);
@@ -24,7 +31,24 @@ function writeConfig(path) {
   }
 }
 
+function readConfig(setting) {
+  if (!existsSync(CONFIG_FILE)) {
+    log.error("Config file does not exist");
+    return;
+  }
+
+  const config = JSON.parse(readFileSync(CONFIG_FILE, { encoding: "utf8" }));
+
+  if (!config[setting]) {
+    log.error("Config setting does not exist");
+    return;
+  }
+
+  return config[setting];
+}
+
 module.exports = {
   validateProjectsDirectory,
-  writeConfig
+  writeConfig,
+  readConfig
 };

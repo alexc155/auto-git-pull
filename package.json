@@ -4,8 +4,8 @@
   "description": "Fetches all repos from Git in a working folder, and optionally pulls changes if there are no conflicts.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --reporter spec",
-    "test:watch": "mocha --reporter nyan --watch"
+    "test": "mocha **/*.spec.js --recursive --reporter spec",
+    "test:watch": "mocha **/*.spec.js --recursive --reporter nyan --watch"
   },
   "repository": {
     "type": "git",

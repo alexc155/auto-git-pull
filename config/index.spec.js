@@ -1,6 +1,6 @@
 "use strict";
 
-const { readFileSync } = require("fs");
+const { readFileSync, writeFileSync } = require("fs");
 
 const { expect } = require("chai");
 const mockFs = require("mock-fs");
@@ -9,7 +9,10 @@ const proxyquire = require("proxyquire");
 
 const utils = { log: { info: sinon.spy(), error: sinon.spy() } };
 
-var sut = proxyquire("../config", {
+const CONFIG_FILE = "./git-autofetch.config";
+const PROJECTS_DIRECTORY = "~/Documents/GitHub";
+
+const sut = proxyquire("./index", {
   "../utils": utils
 });
 
@@ -35,11 +38,12 @@ after(function() {
   mockFs.restore();
 });
 
-describe("#gitAutofetch", function() {
+describe("#config", function() {
   it("returns true if directory is valid", function() {
-    const result = sut.validateProjectsDirectory("~/Documents/GitHub");
+    const result = sut.validateProjectsDirectory(PROJECTS_DIRECTORY);
     expect(result).to.equal(true);
   });
+
   it("returns false if directory is invalid", function() {
     const result = sut.validateProjectsDirectory("/invalid/path");
     expect(result).to.equal(false);
@@ -47,12 +51,25 @@ describe("#gitAutofetch", function() {
   });
 
   it("writes a path to the config file", function() {
-    sut.writeConfig("~/Documents/GitHub");
-    const result = readFileSync("./git-autofetch.config", { encoding: "utf8" });
+    sut.writeConfig("projects_directory", PROJECTS_DIRECTORY);
+
+    const result = readFileSync(CONFIG_FILE, { encoding: "utf8" });
     expect(result).to.equal(
       JSON.stringify({
-        projects_directory: "~/Documents/GitHub"
+        projects_directory: PROJECTS_DIRECTORY
       })
     );
+  });
+
+  it("reads a path from the config file", function() {
+    writeFileSync(
+      CONFIG_FILE,
+      JSON.stringify({
+        projects_directory: PROJECTS_DIRECTORY
+      })
+    );
+
+    const projectsDirectory = sut.readConfig("projects_directory");
+    expect(projectsDirectory).to.equal(PROJECTS_DIRECTORY);
   });
 });

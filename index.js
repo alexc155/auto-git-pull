@@ -23,7 +23,10 @@ main();
  * @return {bool}
  */
 function setProjectsDirectory(path) {
-  if (validateProjectsDirectory(path) && writeConfig(path)) {
+  if (
+    validateProjectsDirectory(path) &&
+    writeConfig("projects_directory", path)
+  ) {
     return true;
   }
   return false;
