@@ -3,30 +3,33 @@
 const { readdirSync, lstatSync } = require("fs");
 const { readConfig } = require("../config");
 const { log } = require("../utils");
+const git = require("../modules/git");
 
 let projectDirectoryList = [];
-
-function testFolderForGit(path) {
-  const folderContents = readdirSync(path);
-  return folderContents.includes(".git");
-}
 
 function buildProjectDirectoryList() {
   projectDirectoryList = [];
 
   const projectsDirectory = readConfig("projects_directory");
 
-  readdirSync(projectsDirectory).forEach(directoryEntry => {
-    if (lstatSync(projectsDirectory + "/" + directoryEntry).isDirectory()) {
-      if (testFolderForGit(projectsDirectory + "/" + directoryEntry)) {
-        projectDirectoryList.push(directoryEntry);
-      }
+  const dirContents = readdirSync(projectsDirectory);
+
+  dirContents.forEach(directoryEntry => {
+    const path = projectsDirectory + "/" + directoryEntry;
+
+    if (git.checkIsRepo(path)) {
+      projectDirectoryList.push(directoryEntry);
     }
   });
 
   return projectDirectoryList;
 }
 
+function fetchFromGit(path) {
+    git.gitExec(path, "fetch");    
+}
+
 module.exports = {
-  buildProjectDirectoryList
+  buildProjectDirectoryList,
+  fetchFromGit
 };
