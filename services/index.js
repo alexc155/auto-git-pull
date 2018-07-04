@@ -10,26 +10,44 @@ let projectDirectoryList = [];
 function buildProjectDirectoryList() {
   projectDirectoryList = [];
 
-  const projectsDirectory = readConfig("projects_directory");
+  try {
+    const projectsDirectory = readConfig("projects_directory");
 
-  const dirContents = readdirSync(projectsDirectory);
+    const dirContents = readdirSync(projectsDirectory);
 
-  dirContents.forEach(directoryEntry => {
-    const path = projectsDirectory + "/" + directoryEntry;
+    dirContents.forEach(directoryEntry => {
+      const path = projectsDirectory + "/" + directoryEntry;
 
-    if (git.checkIsRepo(path)) {
-      projectDirectoryList.push(directoryEntry);
-    }
-  });
+      if (git.checkIsRepo(path)) {
+        projectDirectoryList.push(path);
+      }
+    });
+  } catch (error) {
+    log.error(error);
+    projectDirectoryList = [];
+  }
 
   return projectDirectoryList;
 }
 
 function fetchFromGit(path) {
-    git.gitExec(path, "fetch");    
+  return git.gitExec(path, "fetch");
+}
+
+function fetchProjectsFromGit() {
+  buildProjectDirectoryList();
+
+  const results = [];
+
+  projectDirectoryList.forEach(projectDirectory => {
+    results.push(fetchFromGit(projectDirectory));
+  });
+
+  return results;
 }
 
 module.exports = {
   buildProjectDirectoryList,
-  fetchFromGit
+  fetchFromGit,
+  fetchProjectsFromGit
 };

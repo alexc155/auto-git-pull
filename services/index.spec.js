@@ -7,15 +7,26 @@ const proxyquire = require("proxyquire");
 
 const utils = { log: { info: sinon.spy(), error: sinon.spy() } };
 
+const PROJECT_FOLDER = "~/Documents/GitHub";
 const config = {
   readConfig: function() {
-    return "~/Documents/GitHub";
+    return PROJECT_FOLDER;
+  }
+};
+
+const git = {
+  gitExec: function(path, cmd) {
+    if (cmd === "fetch" && path === `${PROJECT_FOLDER}/project1`) {
+      return "done.";
+    }
+    return "";
   }
 };
 
 const sut = proxyquire("./index", {
   "../utils": utils,
-  "../config": config
+  "../config": config,
+  "../modules/git": git
 });
 
 const GIT_PROJECTS = {
@@ -58,7 +69,16 @@ describe("#services", function() {
   it("returns a list of projects", function() {
     const result = sut.buildProjectDirectoryList();
     expect(result).to.deep.equal(
-      Object.getOwnPropertyNames(GIT_PROJECTS).sort()
+      Object.getOwnPropertyNames(GIT_PROJECTS)
+        .map(gitProject => {
+          return `${PROJECT_FOLDER}/${gitProject}`;
+        })
+        .sort()
     );
+  });
+
+  it("fetches projects successfully", function() {
+    const results = sut.fetchProjectsFromGit();
+    expect(results).to.deep.equal(["done.", "", ""]);
   });
 });
