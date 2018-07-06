@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/alexc155/git-autofetch.svg?branch=master)](https://travis-ci.org/alexc155/git-autofetch)
+[![Build Status](https://travis-ci.org/alexc155/git-autofetch.svg?branch=master)](https://travis-ci.org/alexc155/git-autofetch) 
+[![Coverage Status](https://coveralls.io/repos/github/alexc155/git-autofetch/badge.svg?branch=master)](https://coveralls.io/github/alexc155/git-autofetch?branch=master)
 
 # git-autofetch
 
