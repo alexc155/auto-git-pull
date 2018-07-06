@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha **/*.spec.js --recursive --reporter spec",
-    "test:watch": "mocha **/*.spec.js --recursive --reporter min --watch",
+    "test:watch": "npm install && mocha **/*.spec.js --recursive --reporter min --watch",
     "cover": "node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- -R spec **/*.spec.js"
   },
   "repository": {
