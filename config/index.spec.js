@@ -5,7 +5,11 @@ const { readFileSync, writeFileSync, unlinkSync } = require("fs");
 const { expect } = require("chai");
 const mockFs = require("mock-fs");
 const sinon = require("sinon");
-const proxyquire = require("proxyquire");
+const proxyquire = require("proxyquire")
+  .noCallThru()
+  .noPreserveCache();
+
+console.error = function() {};
 
 const utils = {
   log: { info: sinon.spy(console, "log"), error: sinon.spy(console, "error") }

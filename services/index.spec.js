@@ -62,7 +62,7 @@ beforeEach(function() {
 });
 
 afterEach(function() {
-  mockFs.restore();
+  mockFs.restore();  
 });
 
 describe("#services", function() {

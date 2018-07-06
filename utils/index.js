@@ -3,13 +3,11 @@
 module.exports = {
   log: {
     info: function() {
-      console.log.apply(console, Array.prototype.slice.call(arguments));
-      return true;
+      console.log.apply(console, arguments);
     },
 
     error: function() {
-      console.error.apply(console, Array.prototype.slice.call(arguments));
-      return true;
+      console.error.apply(console, arguments);
     }
   }
 };
