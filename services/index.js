@@ -1,6 +1,6 @@
 "use strict";
 
-const { readdirSync, lstatSync } = require("fs");
+const { readdirSync } = require("fs");
 const { readConfig } = require("../config");
 const { log } = require("../utils");
 const git = require("../modules/git");
@@ -23,6 +23,7 @@ function buildProjectDirectoryList() {
       }
     });
   } catch (error) {
+    log.error("buildProjectDirectoryList error: ");
     log.error(error);
     projectDirectoryList = [];
   }
@@ -49,5 +50,6 @@ function fetchProjectsFromGit() {
 module.exports = {
   buildProjectDirectoryList,
   fetchFromGit,
-  fetchProjectsFromGit
+  fetchProjectsFromGit,
+  projectDirectoryList
 };

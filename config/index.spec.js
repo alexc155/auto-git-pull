@@ -18,15 +18,14 @@ const sut = proxyquire("./index", {
   "../utils": utils
 });
 
-before(function() {
-  // runs before all tests in this block
+beforeEach(function() {
   mockFs({
     "~/Documents/GitHub": {},
     "./": {}
   });
 });
 
-after(function() {
+afterEach(function() {
   mockFs.restore();
 });
 
@@ -58,13 +57,15 @@ describe("#config", function() {
     );
   });
 
-  //it("errors writing an invalid setting to the config file", function() {
-  //const result = sut.writeConfig(undefined, PROJECTS_DIRECTORY);
+  it("errors writing an invalid setting to the config file", function() {
+    mockFs.restore();
+    mockFs({ "./git-autofetch.config": "corrupt" });
+    const result = sut.writeConfig(undefined, PROJECTS_DIRECTORY);
 
-  //expect(result).to.equal(false);
+    expect(result).to.equal(false);
 
-  //expect(utils.log.error.calledWith("???")).to.equal(true);
-  //});
+    expect(utils.log.error.calledWith("Error in writeConfig: ")).to.equal(true);
+  });
 
   it("reads a path from the config file", function() {
     writeFileSync(

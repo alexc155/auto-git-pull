@@ -26,6 +26,7 @@ function writeConfig(setting, value) {
     writeFileSync(CONFIG_FILE, JSON.stringify(config));
     return true;
   } catch (error) {
+    log.error("Error in writeConfig: ");
     log.error(error);
     return false;
   }

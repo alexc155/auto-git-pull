@@ -53,7 +53,7 @@ const DIRECTORY_STRUCTURE = Object.assign({}, GIT_PROJECTS, {
   "file2.txt": "file content here"
 });
 
-before(function() {
+beforeEach(function() {
   // runs before all tests in this block
   mockFs({
     "~/Documents/GitHub": DIRECTORY_STRUCTURE,
@@ -61,7 +61,7 @@ before(function() {
   });
 });
 
-after(function() {
+afterEach(function() {
   mockFs.restore();
 });
 
@@ -75,6 +75,17 @@ describe("#services", function() {
         })
         .sort()
     );
+  });
+
+  it("errors", function() {
+    mockFs.restore();
+    mockFs({});
+    sut.buildProjectDirectoryList();
+
+    expect(sut.projectDirectoryList).to.deep.equal([]);
+    expect(
+      utils.log.error.calledWith("buildProjectDirectoryList error: ")
+    ).to.equal(true);
   });
 
   it("fetches projects successfully", function() {
