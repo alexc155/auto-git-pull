@@ -47,9 +47,28 @@ function fetchProjectsFromGit() {
   return results;
 }
 
+function runGitStatus(path) {
+  return git.gitExec(path, "status");
+}
+
+function runStatusOnProjects() {
+  buildProjectDirectoryList();
+
+  const results = [];
+
+  projectDirectoryList.forEach(projectDirectory => {
+    results.push(runGitStatus(projectDirectory));
+  });
+
+  return(results);
+}
+
+runStatusOnProjects();
+
 module.exports = {
   buildProjectDirectoryList,
   fetchFromGit,
   fetchProjectsFromGit,
-  projectDirectoryList
+  projectDirectoryList,
+  runStatusOnProjects
 };

@@ -2,10 +2,9 @@
 
 const { expect } = require("chai");
 const mockFs = require("mock-fs");
-const sinon = require("sinon");
 const proxyquire = require("proxyquire");
 
-const utils = { log: { info: sinon.spy(), error: sinon.spy() } };
+console.error = function() {};
 
 const PROJECT_FOLDER = "~/Documents/GitHub";
 const config = {
@@ -18,13 +17,14 @@ const git = {
   gitExec: function(path, cmd) {
     if (cmd === "fetch" && path === `${PROJECT_FOLDER}/project1`) {
       return "done.";
+    } else if (cmd === "status" && path === `${PROJECT_FOLDER}/project1`) {
+      return "On branch master\nYour branch is behind 'origin/master' by 2 commits, and can be fast-forwarded.\n  (use \"git pull\" to update your local branch)\n\nnothing to commit, working tree clean\n";
     }
     return "";
   }
 };
 
 const sut = proxyquire("./index", {
-  "../utils": utils,
   "../config": config,
   "../modules/git": git
 });
@@ -62,7 +62,7 @@ beforeEach(function() {
 });
 
 afterEach(function() {
-  mockFs.restore();  
+  mockFs.restore();
 });
 
 describe("#services", function() {
@@ -77,19 +77,28 @@ describe("#services", function() {
     );
   });
 
-  it("errors", function() {
+  it("errors when file system is unavailable", function() {
     mockFs.restore();
     mockFs({});
     sut.buildProjectDirectoryList();
 
     expect(sut.projectDirectoryList).to.deep.equal([]);
     expect(
-      utils.log.error.calledWith("buildProjectDirectoryList error: ")
+      console.error.calledWith("buildProjectDirectoryList error: ")
     ).to.equal(true);
   });
 
   it("fetches projects successfully", function() {
     const results = sut.fetchProjectsFromGit();
     expect(results).to.deep.equal(["done.", "", ""]);
+  });
+
+  it("gets projects' status successfully", function() {
+    const results = sut.runStatusOnProjects();
+    expect(results).to.deep.equal([
+      "On branch master\nYour branch is behind 'origin/master' by 2 commits, and can be fast-forwarded.\n  (use \"git pull\" to update your local branch)\n\nnothing to commit, working tree clean\n",
+      "",
+      ""
+    ]);
   });
 });

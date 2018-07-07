@@ -5,32 +5,25 @@ const { readFileSync, writeFileSync, unlinkSync } = require("fs");
 const { expect } = require("chai");
 const mockFs = require("mock-fs");
 const sinon = require("sinon");
-const proxyquire = require("proxyquire")
-  .noCallThru()
-  .noPreserveCache();
-
-console.error = function() {};
-
-const utils = {
-  log: { info: sinon.spy(console, "log"), error: sinon.spy(console, "error") }
-};
 
 const CONFIG_FILE = "./git-autofetch.config";
 const PROJECTS_DIRECTORY = "~/Documents/GitHub";
 
-const sut = proxyquire("./index", {
-  "../utils": utils
-});
+const sut = require("./index");
 
 beforeEach(function() {
   mockFs({
     "~/Documents/GitHub": {},
     "./": {}
   });
+  sinon.spy(console, "log");
+  sinon.spy(console, "error");
 });
 
 afterEach(function() {
   mockFs.restore();
+  console.log.restore();
+  console.error.restore();
 });
 
 describe("#config", function() {
@@ -44,7 +37,7 @@ describe("#config", function() {
     expect(result).to.equal(false);
 
     expect(
-      utils.log.error.calledWith("Path '/invalid/path' does not exist.")
+      console.error.calledWith("Path '/invalid/path' does not exist.")
     ).to.equal(true);
   });
 
@@ -68,7 +61,7 @@ describe("#config", function() {
 
     expect(result).to.equal(false);
 
-    expect(utils.log.error.calledWith("Error in writeConfig: ")).to.equal(true);
+    expect(console.error.calledWith("Error in writeConfig: ")).to.equal(true);
   });
 
   it("reads a path from the config file", function() {
@@ -96,9 +89,9 @@ describe("#config", function() {
 
     expect(projectsDirectory).to.equal(undefined);
 
-    expect(
-      utils.log.error.calledWith("Config setting does not exist")
-    ).to.equal(true);
+    expect(console.error.calledWith("Config setting does not exist")).to.equal(
+      true
+    );
   });
 
   it("errors when reading a path from the config file if the config file doesn't exist", function() {
@@ -115,7 +108,7 @@ describe("#config", function() {
 
     expect(projectsDirectory).to.equal(undefined);
 
-    expect(utils.log.error.calledWith("Config file does not exist")).to.equal(
+    expect(console.error.calledWith("Config file does not exist")).to.equal(
       true
     );
   });
