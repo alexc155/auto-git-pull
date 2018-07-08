@@ -68,11 +68,21 @@ function* getPullableProjects() {
   }
 }
 
+function runGitPull(path) {
+  return git.gitExec(path, "pull");
+}
+
+function* pullProjectsFromGit() {
+  for (const project of getPullableProjects()) {
+    yield runGitPull(project);
+  }
+}
+
 module.exports = {
   buildProjectDirectoryList,
-  fetchFromGit,
   fetchProjectsFromGit,
   projectDirectoryList,
   runStatusOnProjects,
-  getPullableProjects
+  getPullableProjects,
+  pullProjectsFromGit
 };

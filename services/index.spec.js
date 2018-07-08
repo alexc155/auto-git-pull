@@ -19,6 +19,8 @@ const git = {
       return "done.";
     } else if (cmd === "status" && path === `${PROJECT_FOLDER}/project1`) {
       return "On branch master\nYour branch is behind 'origin/master' by 2 commits, and can be fast-forwarded.\n  (use \"git pull\" to update your local branch)\n\nnothing to commit, working tree clean\n";
+    } else if (cmd === "pull" && path === `${PROJECT_FOLDER}/project1`) {
+      return "Updating";
     }
     return "";
   }
@@ -88,12 +90,12 @@ describe("#services", function() {
     ).to.equal(true);
   });
 
-  it("fetches projects successfully", function() {
+  it("fetches projects", function() {
     const results = [...sut.fetchProjectsFromGit()];
     expect(results).to.deep.equal(["done.", "", ""]);
   });
 
-  it("gets projects' status successfully", function() {
+  it("gets projects' status", function() {
     const results = [...sut.runStatusOnProjects()];
 
     expect(results).to.deep.equal([
@@ -108,7 +110,11 @@ describe("#services", function() {
 
   it("checks status of projects for pull", function() {
     const results = [...sut.getPullableProjects()];
-    expect(results).to.deep.equal(['~/Documents/GitHub/project1']);
-    
-  })
+    expect(results).to.deep.equal(['~/Documents/GitHub/project1']);    
+  });
+
+  it("pulls projects", function() {
+    const results = [...sut.pullProjectsFromGit()];
+    expect(results).to.deep.equal(["Updating"]);
+  });
 });
