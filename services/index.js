@@ -35,40 +35,44 @@ function fetchFromGit(path) {
   return git.gitExec(path, "fetch");
 }
 
-function fetchProjectsFromGit() {
+function* fetchProjectsFromGit() {
   buildProjectDirectoryList();
 
-  const results = [];
-
-  projectDirectoryList.forEach(projectDirectory => {
-    results.push(fetchFromGit(projectDirectory));
-  });
-
-  return results;
+  for (const projectDirectory of projectDirectoryList) {
+    yield fetchFromGit(projectDirectory);
+  }
 }
 
 function runGitStatus(path) {
   return git.gitExec(path, "status");
 }
 
-function runStatusOnProjects() {
+function* runStatusOnProjects() {
   buildProjectDirectoryList();
 
-  const results = [];
-
-  projectDirectoryList.forEach(projectDirectory => {
-    results.push(runGitStatus(projectDirectory));
-  });
-
-  return(results);
+  for (const projectDirectory of projectDirectoryList) {
+    yield { [projectDirectory]: runGitStatus(projectDirectory) };
+  }
 }
 
-runStatusOnProjects();
+function* getPullableProjects() {
+  const statuses = runStatusOnProjects();
+
+  const pattern = /Your branch is behind .*? by \d+ commits?, and can be fast-forwarded/gm;
+
+  for (const status of statuses) {
+    const project = Object.getOwnPropertyNames(status)[0];
+    if (status[project].search(pattern) >= 0) {
+      yield project;
+    }
+  }
+}
 
 module.exports = {
   buildProjectDirectoryList,
   fetchFromGit,
   fetchProjectsFromGit,
   projectDirectoryList,
-  runStatusOnProjects
+  runStatusOnProjects,
+  getPullableProjects
 };

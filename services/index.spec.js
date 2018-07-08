@@ -89,16 +89,26 @@ describe("#services", function() {
   });
 
   it("fetches projects successfully", function() {
-    const results = sut.fetchProjectsFromGit();
+    const results = [...sut.fetchProjectsFromGit()];
     expect(results).to.deep.equal(["done.", "", ""]);
   });
 
   it("gets projects' status successfully", function() {
-    const results = sut.runStatusOnProjects();
+    const results = [...sut.runStatusOnProjects()];
+
     expect(results).to.deep.equal([
-      "On branch master\nYour branch is behind 'origin/master' by 2 commits, and can be fast-forwarded.\n  (use \"git pull\" to update your local branch)\n\nnothing to commit, working tree clean\n",
-      "",
-      ""
+      {
+        "~/Documents/GitHub/project1":
+          "On branch master\nYour branch is behind 'origin/master' by 2 commits, and can be fast-forwarded.\n  (use \"git pull\" to update your local branch)\n\nnothing to commit, working tree clean\n"
+      },
+      { "~/Documents/GitHub/project2": "" },
+      { "~/Documents/GitHub/project3": "" }
     ]);
   });
+
+  it("checks status of projects for pull", function() {
+    const results = [...sut.getPullableProjects()];
+    expect(results).to.deep.equal(['~/Documents/GitHub/project1']);
+    
+  })
 });
