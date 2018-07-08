@@ -3,8 +3,37 @@
 
 const updateNotifier = require("update-notifier");
 const pkg = require("./package.json");
+const services = require("./services");
+const { log } = require("./utils");
 
-const { validateProjectsDirectory, writeConfig } = require("./config");
+function showHelp() {
+  log.info(`
+  Fetches all repos from Git in a working folder, and optionally pulls changes if there are no conflicts.
+
+  Available commands:
+    set-projects-directory | spd <PATH>
+    help
+
+  Example usage:
+    $ git-autofetch spd /Users/you/Documents/GitHub
+
+  Notes:
+    * [point]
+`);
+}
+
+/**
+ * Sets the parent directory for git projects.
+ * @param {string} path - Qualified path to directory
+ * @return {boolean}
+ */
+function setProjectsDirectory(path) {
+  if (services.setProjectsDirectory(path)) {
+    log.info("OK");
+    return true;
+  }
+  return false;
+}
 
 function main() {
   updateNotifier({
@@ -13,24 +42,24 @@ function main() {
   }).notify({
     isGlobal: true
   });
+
+  const action = process.argv[2];
+  const args = process.argv.slice(3);
+  switch (action) {
+    case "set-projects-directory":
+    case "spd":
+      setProjectsDirectory(args[0]);
+      break;
+    case "help":
+    case "":
+    case undefined:
+    default:
+      showHelp();
+      break;
+  }
 }
 
 main();
-
-/**
- * Sets the parent directory for git projects.
- * @param {string} path - Qualified path to directory
- * @return {bool}
- */
-function setProjectsDirectory(path) {
-  if (
-    validateProjectsDirectory(path) &&
-    writeConfig("projects_directory", path)
-  ) {
-    return true;
-  }
-  return false;
-}
 
 module.exports = {
   setProjectsDirectory

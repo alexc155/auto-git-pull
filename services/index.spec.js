@@ -10,6 +10,12 @@ const PROJECT_FOLDER = "~/Documents/GitHub";
 const config = {
   readConfig: function() {
     return PROJECT_FOLDER;
+  },
+  validateProjectsDirectory: function(path) {
+    return path === PROJECT_FOLDER;
+  },
+  writeConfig: function() {
+    return true;
   }
 };
 
@@ -68,6 +74,17 @@ afterEach(function() {
 });
 
 describe("#services", function() {
+
+  it("sets Project Directory", function() {
+    const result = sut.setProjectsDirectory(PROJECT_FOLDER);
+    expect(result).to.be.equal(true);
+  });
+
+  it("errors when setting invalid Projects Directory", function() {
+    const result = sut.setProjectsDirectory("/invalid/path/");
+    expect(result).to.be.equal(false);
+  });
+
   it("returns a list of projects", function() {
     const result = sut.buildProjectDirectoryList();
     expect(result).to.deep.equal(

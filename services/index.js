@@ -1,11 +1,25 @@
 "use strict";
 
 const { readdirSync } = require("fs");
-const { readConfig } = require("../config");
+const {
+  readConfig,
+  validateProjectsDirectory,
+  writeConfig
+} = require("../config");
 const { log } = require("../utils");
 const git = require("../modules/git");
 
 let projectDirectoryList = [];
+
+function setProjectsDirectory(path) {
+  if (
+    validateProjectsDirectory(path) &&
+    writeConfig("projects_directory", path)
+  ) {
+    return true;
+  }
+  return false;
+}
 
 function buildProjectDirectoryList() {
   projectDirectoryList = [];
@@ -79,6 +93,7 @@ function* pullProjectsFromGit() {
 }
 
 module.exports = {
+  setProjectsDirectory,
   buildProjectDirectoryList,
   fetchProjectsFromGit,
   projectDirectoryList,
