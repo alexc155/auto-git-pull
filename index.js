@@ -11,28 +11,24 @@ function showHelp() {
   Fetches all repos from Git in a working folder, and optionally pulls changes if there are no conflicts.
 
   Available commands:
-    set-projects-directory | spd <PATH>
-    help
+    --set-projects-directory | -spd <PATH>
+    --fetch                  | -f
+    --pull                   | -p
+    --status                 | -s
+    --help                   | -h
 
   Example usage:
-    $ git-autofetch spd /Users/you/Documents/GitHub
+    $ git-autofetch -spd /Users/you/Documents/GitHub
+    $ git-autofetch -f
+    $ git-autofetch -p
 
   Notes:
-    * [point]
+    * You must set a projects directory before fetching or pulling.
+      This should be the root folder of you Git projects.
+    * The 'Pull' command performs a fetch & pull.
+    * 'Pull' will only attempt to pull changes if there are conflicts or changes to the local tree.
+    * The more out of date a repo is, the longer it will take to fetch and pull.
 `);
-}
-
-/**
- * Sets the parent directory for git projects.
- * @param {string} path - Qualified path to directory
- * @return {boolean}
- */
-function setProjectsDirectory(path) {
-  if (services.setProjectsDirectory(path)) {
-    log.info("OK");
-    return true;
-  }
-  return false;
 }
 
 function main() {
@@ -45,12 +41,40 @@ function main() {
 
   const action = process.argv[2];
   const args = process.argv.slice(3);
+  let fetchResults = [];
   switch (action) {
-    case "set-projects-directory":
-    case "spd":
-      setProjectsDirectory(args[0]);
+    case "-spd":
+    case "--set-projects-directory":
+      if (services.setProjectsDirectory(args[0])) {
+        log.info("");
+        log.info("OK");
+      }
       break;
-    case "help":
+    case "-f":
+    case "--fetch":
+      fetchResults = [...services.fetchProjectsFromGit()];
+      if (fetchResults.length > 0) {
+        log.info("");
+        log.info("OK");
+      }
+      break;
+    case "-p":
+    case "--pull":
+      fetchResults = [...services.fetchProjectsFromGit()];
+      if (fetchResults.length > 0) {
+        const pullResults = [...services.pullProjectsFromGit()];
+        if (pullResults.length > 0) {
+          log.info(pullResults);
+        }
+      }
+      break;
+    case "-s":
+    case "--status":
+      const statusResults = [...services.runStatusOnProjects()];
+      log.info(statusResults);
+      break;
+    case "-h":
+    case "--help":
     case "":
     case undefined:
     default:
@@ -60,7 +84,3 @@ function main() {
 }
 
 main();
-
-module.exports = {
-  setProjectsDirectory
-};

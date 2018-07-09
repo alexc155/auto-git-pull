@@ -46,6 +46,7 @@ function buildProjectDirectoryList() {
 }
 
 function fetchFromGit(path) {
+  log.info(`Fetching ${path}`);  
   return git.gitExec(path, "fetch");
 }
 
@@ -83,6 +84,7 @@ function* getPullableProjects() {
 }
 
 function runGitPull(path) {
+  log.info(`Pulling ${path}`);
   return git.gitExec(path, "pull");
 }
 
