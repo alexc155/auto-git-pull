@@ -37,12 +37,13 @@ const GIT_PROJECTS = {
 };
 
 const projectDirectoryStub = {
-  buildProjectDirectoryList: function() {},
-  projectDirectoryList: [
-    "~/Documents/GitHub/directory1/project3",
-    "~/Documents/GitHub/project1",
-    "~/Documents/GitHub/project2"
-  ]
+  buildProjectDirectoryList: function() {
+    return [
+      "~/Documents/GitHub/directory1/project3",
+      "~/Documents/GitHub/project1",
+      "~/Documents/GitHub/project2"
+    ];
+  }
 };
 
 const DIRECTORY_STRUCTURE = Object.assign({}, GIT_PROJECTS, {

@@ -7,10 +7,7 @@ const {
 } = require("../../config");
 const { log } = require("../../utils");
 const git = require("../../modules/git");
-const {
-  buildProjectDirectoryList,
-  projectDirectoryList
-} = require("../project-directory");
+const { buildProjectDirectoryList } = require("../project-directory");
 
 function fetchFromGit(path) {
   log.info(`Fetching ${path}`);
@@ -18,7 +15,7 @@ function fetchFromGit(path) {
 }
 
 function* fetchProjectsFromGit() {
-  buildProjectDirectoryList();
+    const projectDirectoryList = buildProjectDirectoryList();
 
   for (const projectDirectory of projectDirectoryList) {
     yield fetchFromGit(projectDirectory);
@@ -30,7 +27,7 @@ function runGitStatus(path) {
 }
 
 function* runStatusOnProjects() {
-  buildProjectDirectoryList();
+  const projectDirectoryList = buildProjectDirectoryList();
 
   for (const projectDirectory of projectDirectoryList) {
     yield { [projectDirectory]: runGitStatus(projectDirectory) };

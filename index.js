@@ -3,7 +3,9 @@
 
 const updateNotifier = require("update-notifier");
 const pkg = require("./package.json");
-const services = require("./services");
+const git = require("./services/git");
+const includedProjectDirectories = require("./services/included-project-directories");
+const projectDirectory = require("./services/project-directory");
 const { log } = require("./utils");
 
 function showHelp() {
@@ -51,28 +53,31 @@ function main() {
     isGlobal: true
   });
 
-  const action = process.argv[2];
+  let action = process.argv[2];
+  action = action || "";
   const args = process.argv.slice(3);
   let fetchResults = [];
+  let incProjectDirs;
+
   switch (action.toLowerCase()) {
     case "-spd":
     case "--set-projects-directory":
-      if (services.setProjectsDirectory(args[0])) {
+      if (projectDirectory.setProjectsDirectory(args[0])) {
         log.info("", "OK");
       }
       break;
     case "-f":
     case "--fetch":
-      fetchResults = [...services.fetchProjectsFromGit()];
+      fetchResults = [...git.fetchProjectsFromGit()];
       if (fetchResults.length > 0) {
         log.info("", "OK");
       }
       break;
     case "-p":
     case "--pull":
-      fetchResults = [...services.fetchProjectsFromGit()];
+      fetchResults = [...git.fetchProjectsFromGit()];
       if (fetchResults.length > 0) {
-        const pullResults = [...services.pullProjectsFromGit()];
+        const pullResults = [...git.pullProjectsFromGit()];
         if (pullResults.length > 0) {
           log.info(pullResults);
         }
@@ -80,32 +85,36 @@ function main() {
       break;
     case "-s":
     case "--status":
-      const statusResults = [...services.runStatusOnProjects()];
+      const statusResults = [...git.runStatusOnProjects()];
       log.info(statusResults);
       break;
     case "-ai":
     case "--add-include":
-      const incProjectDirs = services.addIncludedProjectDirectory(args[0]);
+      incProjectDirs = includedProjectDirectories.addIncludedProjectDirectory(
+        args[0]
+      );
       if (incProjectDirs) {
         log.info("", "Included Project Directories:", "", incProjectDirs);
       }
       break;
     case "-ri":
     case "--remove-include":
-      const incProjectDirs = services.removeIncludedProjectDirectory(args[0]);
+      incProjectDirs = includedProjectDirectories.removeIncludedProjectDirectory(
+        args[0]
+      );
       if (incProjectDirs) {
         log.info("", "Included Project Directories:", "", incProjectDirs);
       }
       break;
     case "-rai":
     case "--remove-all-includes":
-      if (services.removeAllIncludedProjectDirectories()) {
+      if (includedProjectDirectories.removeAllIncludedProjectDirectories()) {
         log.info("", "OK");
       }
       break;
     case "-i":
     case "--show-includes":
-      const incProjectDirs = services.showIncludedProjectDirectories();
+      incProjectDirs = includedProjectDirectories.showIncludedProjectDirectories();
       if (incProjectDirs) {
         log.info("", "Included Project Directories:", "", incProjectDirs);
       }

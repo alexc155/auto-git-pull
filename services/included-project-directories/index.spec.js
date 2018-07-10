@@ -4,8 +4,6 @@ const { expect } = require("chai");
 const mockFs = require("mock-fs");
 const proxyquire = require("proxyquire").noPreserveCache();
 
-const PROJECT_FOLDER = "~/Documents/GitHub";
-
 const configWithIncludedProjects = {
   readConfig: function(setting, defaultValue) {
     return ["/path/to/project", "/path/to/another"];

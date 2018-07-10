@@ -9,7 +9,7 @@ const {
 const { log } = require("../../utils");
 const git = require("../../modules/git");
 
-let projectDirectoryList = [];
+let gitRepos = [];
 
 function setProjectsDirectory(path) {
   if (
@@ -28,7 +28,7 @@ function recurseThroughDirectory(projectsDirectory) {
     const path = projectsDirectory + "/" + directoryEntry;
 
     if (git.checkIsRepo(path)) {
-      projectDirectoryList.push(path);
+      gitRepos.push(path);
     } else if (lstatSync(path).isDirectory()) {
       recurseThroughDirectory(path);
     }
@@ -36,8 +36,6 @@ function recurseThroughDirectory(projectsDirectory) {
 }
 
 function buildProjectDirectoryList() {
-  projectDirectoryList = [];
-
   try {
     const includedProjectDirectories = readConfig(
       "included_project_directories",
@@ -45,23 +43,21 @@ function buildProjectDirectoryList() {
     );
 
     if (includedProjectDirectories.length > 0) {
-      projectDirectoryList = includedProjectDirectories;
-      return projectDirectoryList;
+      return includedProjectDirectories;
     }
 
     const projectsDirectory = readConfig("projects_directory");
-
+    gitRepos = [];
     recurseThroughDirectory(projectsDirectory);
+
+    return gitRepos;
   } catch (error) {
     log.error("buildProjectDirectoryList error: ", error);
-    projectDirectoryList = [];
+    return [];
   }
-
-  return projectDirectoryList;
 }
 
 module.exports = {
-  projectDirectoryList,
   setProjectsDirectory,
   buildProjectDirectoryList
 };

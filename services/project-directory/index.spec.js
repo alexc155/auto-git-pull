@@ -117,11 +117,11 @@ describe("#services/project-directory", function() {
     mockFs.restore();
     mockFs({});
 
-    sut.buildProjectDirectoryList();
+    const results = sut.buildProjectDirectoryList();
 
     mockFs.restore();
 
-    expect(sut.projectDirectoryList).to.deep.equal([]);
+    expect(results).to.deep.equal([]);
     expect(
       console.error.calledWith("buildProjectDirectoryList error: ")
     ).to.equal(true);
