@@ -32,7 +32,7 @@ function writeConfig(setting, value) {
   }
 }
 
-function readConfig(setting) {
+function readConfig(setting, defaultValue) {
   if (!existsSync(CONFIG_FILE)) {
     log.error("Config file does not exist");
     return;
@@ -40,9 +40,12 @@ function readConfig(setting) {
 
   const config = JSON.parse(readFileSync(CONFIG_FILE, { encoding: "utf8" }));
 
-  if (!config[setting]) {
+  if (!config[setting] && !defaultValue) {
     log.error("Config setting does not exist");
     return;
+  } else if (!config[setting]) {
+    writeConfig(setting, defaultValue);
+    return defaultValue;
   }
 
   return config[setting];

@@ -77,7 +77,20 @@ describe("#config", function() {
     expect(projectsDirectory).to.equal(PROJECTS_DIRECTORY);
   });
 
-  it("errors when reading a path from the config file if the path doesn't exist", function() {
+  it("returns the default value when reading a path if the path doesn't exist and there is a default", function() {
+    writeFileSync(
+      CONFIG_FILE,
+      JSON.stringify({
+        projects_directory: PROJECTS_DIRECTORY
+      })
+    );
+
+    const projectsDirectory = sut.readConfig("missing_path", "/path/to/files");
+
+    expect(projectsDirectory).to.equal("/path/to/files");
+  });
+
+  it("errors when reading a path from the config file if the path doesn't exist and there is no default", function() {
     writeFileSync(
       CONFIG_FILE,
       JSON.stringify({

@@ -12,9 +12,16 @@ function showHelp() {
 
   Available commands:
     --set-projects-directory | -spd <PATH>
+    
     --fetch                  | -f
     --pull                   | -p
     --status                 | -s
+
+    --add-include            | -ai    <PATH>
+    --remove-include         | -ri    <PATH>
+    --show-includes          | -i
+    --remove-all-includes    | -rai
+
     --help                   | -h
 
   Example usage:
@@ -28,6 +35,11 @@ function showHelp() {
     * The 'Pull' command performs a fetch & pull.
     * 'Pull' will only attempt to pull changes if there are conflicts or changes to the local tree.
     * The more out of date a repo is, the longer it will take to fetch and pull.
+    
+    * To fetch from only a subset of projects, 
+      either add each project using '--add-include <PATH>' 
+        (which means the main projects directory will be ignored), 
+      or exclude paths from the main projects directory using '--remove-include <PATH>'
 `);
 }
 
@@ -42,20 +54,18 @@ function main() {
   const action = process.argv[2];
   const args = process.argv.slice(3);
   let fetchResults = [];
-  switch (action) {
+  switch (action.toLowerCase()) {
     case "-spd":
     case "--set-projects-directory":
       if (services.setProjectsDirectory(args[0])) {
-        log.info("");
-        log.info("OK");
+        log.info("", "OK");
       }
       break;
     case "-f":
     case "--fetch":
       fetchResults = [...services.fetchProjectsFromGit()];
       if (fetchResults.length > 0) {
-        log.info("");
-        log.info("OK");
+        log.info("", "OK");
       }
       break;
     case "-p":
@@ -72,6 +82,33 @@ function main() {
     case "--status":
       const statusResults = [...services.runStatusOnProjects()];
       log.info(statusResults);
+      break;
+    case "-ai":
+    case "--add-include":
+      const incProjectDirs = services.addIncludedProjectDirectory(args[0]);
+      if (incProjectDirs) {
+        log.info("", "Included Project Directories:", "", incProjectDirs);
+      }
+      break;
+    case "-ri":
+    case "--remove-include":
+      const incProjectDirs = services.removeIncludedProjectDirectory(args[0]);
+      if (incProjectDirs) {
+        log.info("", "Included Project Directories:", "", incProjectDirs);
+      }
+      break;
+    case "-rai":
+    case "--remove-all-includes":
+      if (services.removeAllIncludedProjectDirectories()) {
+        log.info("", "OK");
+      }
+      break;
+    case "-i":
+    case "--show-includes":
+      const incProjectDirs = services.showIncludedProjectDirectories();
+      if (incProjectDirs) {
+        log.info("", "Included Project Directories:", "", incProjectDirs);
+      }
       break;
     case "-h":
     case "--help":
