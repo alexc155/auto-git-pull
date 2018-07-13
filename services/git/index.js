@@ -15,7 +15,7 @@ function fetchFromGit(path) {
 }
 
 function* fetchProjectsFromGit() {
-    const projectDirectoryList = buildProjectDirectoryList();
+  const projectDirectoryList = buildProjectDirectoryList();
 
   for (const projectDirectory of projectDirectoryList) {
     yield fetchFromGit(projectDirectory);

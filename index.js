@@ -5,6 +5,7 @@ const updateNotifier = require("update-notifier");
 const pkg = require("./package.json");
 const git = require("./services/git");
 const includedProjectDirectories = require("./services/included-project-directories");
+const excludedProjectDirectories = require("./services/excluded-project-directories");
 const projectDirectory = require("./services/project-directory");
 const { log } = require("./utils");
 
@@ -13,18 +14,23 @@ function showHelp() {
   Fetches all repos from Git in a working folder, and optionally pulls changes if there are no conflicts.
 
   Available commands:
-    --set-projects-directory | -spd <PATH>
+    --set-projects-directory  | -spd    <PATH>
     
-    --fetch                  | -f
-    --pull                   | -p
-    --status                 | -s
+    --fetch                   | -f
+    --pull                    | -p
+    --status                  | -s
 
-    --add-include            | -ai    <PATH>
-    --remove-include         | -ri    <PATH>
-    --show-includes          | -i
-    --remove-all-includes    | -rai
+    --add-include             | -ai     <PATH>
+    --remove-include          | -ri     <PATH>
+    --show-includes           | -si
+    --clear-includes          | -ci
 
-    --help                   | -h
+    --add-exclude             | -ax     <PATH>
+    --remove-exclude          | -rx     <PATH>
+    --show-excludes           | -sx
+    --clear-excludes          | -cx
+
+    --help                    | -h
 
   Example usage:
     $ git-autofetch -spd /Users/you/Documents/GitHub
@@ -58,6 +64,7 @@ function main() {
   const args = process.argv.slice(3);
   let fetchResults = [];
   let incProjectDirs;
+  let excProjectDirs;
 
   switch (action.toLowerCase()) {
     case "-spd":
@@ -106,17 +113,48 @@ function main() {
         log.info("", "Included Project Directories:", "", incProjectDirs);
       }
       break;
-    case "-rai":
-    case "--remove-all-includes":
+    case "-ci":
+    case "--clear-includes":
       if (includedProjectDirectories.removeAllIncludedProjectDirectories()) {
         log.info("", "OK");
       }
       break;
-    case "-i":
+    case "-si":
     case "--show-includes":
       incProjectDirs = includedProjectDirectories.showIncludedProjectDirectories();
       if (incProjectDirs) {
         log.info("", "Included Project Directories:", "", incProjectDirs);
+      }
+      break;
+    case "-ax":
+    case "--add-exclude":
+      excProjectDirs = excludedProjectDirectories.addExcludedProjectDirectory(
+        args[0]
+      );
+      if (excProjectDirs) {
+        log.info("", "Excluded Project Directories:", "", excProjectDirs);
+      }
+      break;
+    case "-ri":
+    case "--remove-exclude":
+      excProjectDirs = excludedProjectDirectories.removeExcludedProjectDirectory(
+        args[0]
+      );
+      if (excProjectDirs) {
+        log.info("", "Excluded Project Directories:", "", excProjectDirs);
+      }
+      break;
+    case "-ci":
+    case "--clear-excludes":
+      if (excludedProjectDirectories.removeAllExcludedProjectDirectories()) {
+        log.info("", "OK");
+      }
+      break;
+    case "-si":
+    case "--show-excludes":
+      excProjectDirs = excludedProjectDirectories.showExcludedProjectDirectories();
+      if (excProjectDirs) {
+        log.info("", "Excluded Project Directories:", "", excProjectDirs);
       }
       break;
     case "-h":

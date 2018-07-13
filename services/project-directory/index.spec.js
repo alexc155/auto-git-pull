@@ -18,9 +18,24 @@ const configWithIncludedProjects = {
   }
 };
 
+const configWithExcludedProjects = {
+  readConfig: function(setting, defaultValue) {
+    if (setting === "excluded_project_directories") {
+      return [`${PROJECT_FOLDER}/project2`];
+    }
+    if (setting === "included_project_directories") {
+      return [];
+    }
+    return PROJECT_FOLDER;
+  }
+};
+
 const configWithoutIncludedProjects = {
   readConfig: function(setting, defaultValue) {
-    if (setting === "included_project_directories") {
+    if (
+      setting === "included_project_directories" ||
+      setting === "excluded_project_directories"
+    ) {
       return defaultValue;
     }
     return PROJECT_FOLDER;
@@ -103,6 +118,24 @@ describe("#services/project-directory", function() {
     const result = sut.buildProjectDirectoryList();
     mockFs.restore();
     const expectedResult = ["/path/to/another", "/path/to/project"];
+
+    expect(result.sort()).to.deep.equal(expectedResult.sort());
+  });
+
+  it("returns a list of excluded projects", function() {
+    mockFs.restore();
+
+    const sut = proxyquire("./index", {
+      "../../config": configWithExcludedProjects
+    });
+    mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
+
+    const result = sut.buildProjectDirectoryList();
+    mockFs.restore();
+    const expectedResult = [
+      "~/Documents/GitHub/project1",
+      "~/Documents/GitHub/directory1/project3"
+    ];
 
     expect(result.sort()).to.deep.equal(expectedResult.sort());
   });

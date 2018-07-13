@@ -50,7 +50,16 @@ function buildProjectDirectoryList() {
     gitRepos = [];
     recurseThroughDirectory(projectsDirectory);
 
-    return gitRepos;
+    const excludedProjectDirectories = readConfig(
+      "excluded_project_directories",
+      []
+    );
+
+    if (excludedProjectDirectories.length === 0) {
+      return gitRepos;
+    }
+
+    return gitRepos.filter(x => !excludedProjectDirectories.includes(x));
   } catch (error) {
     log.error("buildProjectDirectoryList error: ", error);
     return [];

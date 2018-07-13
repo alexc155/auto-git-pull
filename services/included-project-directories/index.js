@@ -1,8 +1,21 @@
 "use strict";
 
 const { readConfig, writeConfig } = require("../../config");
+const { log } = require("../../utils");
 
 function addIncludedProjectDirectory(path) {
+  const excludedProjectDirectories = readConfig(
+    "excluded_project_directories",
+    []
+  );
+
+  if (excludedProjectDirectories.length > 0) {
+    log.info("You can't have included *and* excluded project directories.");
+    log.info("You need to remove all excluded project directories first.");
+    log.info("Use ` git-autofetch -cx ` to clear them all.");
+    return [];
+  }
+
   let includedProjectDirectories = readConfig(
     "included_project_directories",
     []

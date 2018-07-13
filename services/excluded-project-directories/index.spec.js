@@ -5,10 +5,10 @@ const mockFs = require("mock-fs");
 const proxyquire = require("proxyquire").noPreserveCache();
 const sinon = require("sinon");
 
-const configWithIncludedProjects = {
+const configWithExcludedProjects = {
   readConfig: function(setting, defaultValue) {
-    if (setting === "included_project_directories") {
-      return ["/path/to/project", "/path/to/another"];
+    if (setting === "excluded_project_directories") {
+      return ["~/Documents/GitHub/project2/"];
     } else {
       return [];
     }
@@ -18,9 +18,9 @@ const configWithIncludedProjects = {
   }
 };
 
-const configWithIncludedAndExcludedProjects = {
+const configWithExcludedAndIncludedProjects = {
   readConfig: function(setting, defaultValue) {
-    return ["~/Documents/GitHub/project2/"];
+    return ["/path/to/folder"];
   }
 };
 
@@ -50,33 +50,36 @@ const DIRECTORY_STRUCTURE = Object.assign({}, GIT_PROJECTS, {
   "file2.txt": "file content here"
 });
 
-describe("#services/included-project-directories", function() {
-  it("adds a new included project directory", function() {
+describe("#services/excluded-project-directories", function() {
+  it("adds a new excluded project directory", function() {
     mockFs.restore();
 
     const sut = proxyquire("./index", {
-      "../../config": configWithIncludedProjects
+      "../../config": configWithExcludedProjects
     });
     mockFs.restore();
 
     mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
 
-    const includedProjectDirectories = sut.addIncludedProjectDirectory(
-      "/path/to/project"
+    const excludedProjectDirectories = sut.addExcludedProjectDirectory(
+      "~/Documents/GitHub/directory1/project3/"
     );
 
     mockFs.restore();
 
-    expect(includedProjectDirectories.sort()).to.be.deep.equal(
-      ["/path/to/project", "/path/to/another"].sort()
+    expect(excludedProjectDirectories.sort()).to.be.deep.equal(
+      [
+        "~/Documents/GitHub/directory1/project3/",
+        "~/Documents/GitHub/project2/"
+      ].sort()
     );
   });
 
-  it("doesn't add a new included project directory if there are excluded project directories", function() {
+  it("doesn't add a new excluded project directory if there are included project directories", function() {
     mockFs.restore();
 
     const sut = proxyquire("./index", {
-      "../../config": configWithIncludedAndExcludedProjects
+      "../../config": configWithExcludedAndIncludedProjects
     });
     mockFs.restore();
 
@@ -86,13 +89,13 @@ describe("#services/included-project-directories", function() {
     console.log = function(msg) {};
     sinon.spy(console, "log");
 
-    const includedProjectDirectories = sut.addIncludedProjectDirectory(
+    const excludedProjectDirectories = sut.addExcludedProjectDirectory(
       "~/Documents/GitHub/directory1/project3/"
     );
 
     mockFs.restore();
 
-    expect(includedProjectDirectories.sort()).to.be.deep.equal([].sort());
+    expect(excludedProjectDirectories.sort()).to.be.deep.equal([].sort());
     expect(
       console.log.calledWith(
         "You can't have included *and* excluded project directories."
@@ -103,53 +106,54 @@ describe("#services/included-project-directories", function() {
     console.log = consoleLog;
   });
 
-  it("removes an included project directory", function() {
+  it("removes an excluded project directory", function() {
     mockFs.restore();
 
     const sut = proxyquire("./index", {
-      "../../config": configWithIncludedProjects
+      "../../config": configWithExcludedProjects
     });
     mockFs.restore();
 
     mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
-    const includedProjectDirectories = sut.removeIncludedProjectDirectory(
-      "/path/to/project"
+    const excludedProjectDirectories = sut.removeExcludedProjectDirectory(
+      "~/Documents/GitHub/directory1/project3/"
     );
 
     mockFs.restore();
 
-    expect(includedProjectDirectories).to.be.deep.equal(["/path/to/another"]);
-  });
-
-  it("shows included project directories", function() {
-    mockFs.restore();
-
-    const sut = proxyquire("./index", {
-      "../../config": configWithIncludedProjects
-    });
-    mockFs.restore();
-
-    mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
-    const includedProjectDirectories = sut.showIncludedProjectDirectories();
-
-    mockFs.restore();
-
-    expect(includedProjectDirectories).to.be.deep.equal([
-      "/path/to/project",
-      "/path/to/another"
+    expect(excludedProjectDirectories).to.be.deep.equal([
+      "~/Documents/GitHub/project2/"
     ]);
   });
 
-  it("removes all included project directories", function() {
+  it("shows excluded project directories", function() {
     mockFs.restore();
 
     const sut = proxyquire("./index", {
-      "../../config": configWithIncludedProjects
+      "../../config": configWithExcludedProjects
     });
     mockFs.restore();
 
     mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
-    const result = sut.removeAllIncludedProjectDirectories();
+    const excludedProjectDirectories = sut.showExcludedProjectDirectories();
+
+    mockFs.restore();
+
+    expect(excludedProjectDirectories).to.be.deep.equal([
+      "~/Documents/GitHub/project2/"
+    ]);
+  });
+
+  it("removes all excluded project directories", function() {
+    mockFs.restore();
+
+    const sut = proxyquire("./index", {
+      "../../config": configWithExcludedProjects
+    });
+    mockFs.restore();
+
+    mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
+    const result = sut.removeAllExcludedProjectDirectories();
 
     mockFs.restore();
     expect(result).to.equal(true);
