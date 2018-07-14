@@ -8,6 +8,7 @@ const includedProjectDirectories = require("./services/included-project-director
 const excludedProjectDirectories = require("./services/excluded-project-directories");
 const projectDirectory = require("./services/project-directory");
 const { log } = require("./utils");
+const { EOL } = require("os");
 
 function showHelp() {
   log.info(`
@@ -70,14 +71,14 @@ function main() {
     case "-spd":
     case "--set-projects-directory":
       if (projectDirectory.setProjectsDirectory(args[0])) {
-        log.info("", "OK");
+        log.info(EOL, "OK");
       }
       break;
     case "-f":
     case "--fetch":
       fetchResults = [...git.fetchProjectsFromGit()];
       if (fetchResults.length > 0) {
-        log.info("", "OK");
+        log.info(EOL, "OK");
       }
       break;
     case "-p":
@@ -86,14 +87,14 @@ function main() {
       if (fetchResults.length > 0) {
         const pullResults = [...git.pullProjectsFromGit()];
         if (pullResults.length > 0) {
-          log.info(pullResults);
+          log.info(EOL, pullResults.join(EOL + EOL + " "));
         }
       }
       break;
     case "-s":
     case "--status":
       const statusResults = [...git.runStatusOnProjects()];
-      log.info(statusResults);
+      log.info(EOL, statusResults.join(EOL + " "));
       break;
     case "-ai":
     case "--add-include":
@@ -101,7 +102,12 @@ function main() {
         args[0]
       );
       if (incProjectDirs) {
-        log.info("", "Included Project Directories:", "", incProjectDirs);
+        log.info(
+          EOL,
+          "Included Project Directories:",
+          EOL,
+          incProjectDirs.join(EOL + " ")
+        );
       }
       break;
     case "-ri":
@@ -110,20 +116,30 @@ function main() {
         args[0]
       );
       if (incProjectDirs) {
-        log.info("", "Included Project Directories:", "", incProjectDirs);
+        log.info(
+          EOL,
+          "Included Project Directories:",
+          EOL,
+          incProjectDirs.join(EOL + " ")
+        );
       }
       break;
     case "-ci":
     case "--clear-includes":
       if (includedProjectDirectories.removeAllIncludedProjectDirectories()) {
-        log.info("", "OK");
+        log.info(EOL, "OK");
       }
       break;
     case "-si":
     case "--show-includes":
       incProjectDirs = includedProjectDirectories.showIncludedProjectDirectories();
       if (incProjectDirs) {
-        log.info("", "Included Project Directories:", "", incProjectDirs);
+        log.info(
+          EOL,
+          "Included Project Directories:",
+          EOL,
+          incProjectDirs.join(EOL + " ")
+        );
       }
       break;
     case "-ax":
@@ -132,29 +148,44 @@ function main() {
         args[0]
       );
       if (excProjectDirs) {
-        log.info("", "Excluded Project Directories:", "", excProjectDirs);
+        log.info(
+          EOL,
+          "Excluded Project Directories:",
+          EOL,
+          excProjectDirs.join(EOL + " ")
+        );
       }
       break;
-    case "-ri":
+    case "-rx":
     case "--remove-exclude":
       excProjectDirs = excludedProjectDirectories.removeExcludedProjectDirectory(
         args[0]
       );
       if (excProjectDirs) {
-        log.info("", "Excluded Project Directories:", "", excProjectDirs);
+        log.info(
+          EOL,
+          "Excluded Project Directories:",
+          EOL,
+          excProjectDirs.join(EOL + " ")
+        );
       }
       break;
-    case "-ci":
+    case "-cx":
     case "--clear-excludes":
       if (excludedProjectDirectories.removeAllExcludedProjectDirectories()) {
-        log.info("", "OK");
+        log.info(EOL, "OK");
       }
       break;
-    case "-si":
+    case "-sx":
     case "--show-excludes":
       excProjectDirs = excludedProjectDirectories.showExcludedProjectDirectories();
       if (excProjectDirs) {
-        log.info("", "Excluded Project Directories:", "", excProjectDirs);
+        log.info(
+          EOL,
+          "Excluded Project Directories:",
+          EOL,
+          excProjectDirs.join(EOL + " ")
+        );
       }
       break;
     case "-h":

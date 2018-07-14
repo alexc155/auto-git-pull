@@ -49,7 +49,13 @@ function* getPullableProjects() {
 
 function runGitPull(path) {
   log.info(`Pulling ${path}`);
-  return git.gitExec(path, "pull");
+  let gitPullResult;
+  try {
+    gitPullResult = git.gitExec(path, "pull");
+  } catch (error) {
+    gitPullResult = `${path} can't be pulled right now.`;
+  }
+  return gitPullResult;
 }
 
 function* pullProjectsFromGit() {
@@ -62,5 +68,6 @@ module.exports = {
   fetchProjectsFromGit,
   runStatusOnProjects,
   getPullableProjects,
-  pullProjectsFromGit
+  pullProjectsFromGit,
+  runGitPull
 };

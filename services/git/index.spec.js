@@ -16,6 +16,8 @@ const git = {
       return "On branch master\nYour branch is behind 'origin/master' by 2 commits, and can be fast-forwarded.\n  (use \"git pull\" to update your local branch)\n\nnothing to commit, working tree clean\n";
     } else if (cmd === "pull" && path === `${PROJECT_FOLDER}/project1`) {
       return "Updating";
+    } else if (cmd === "pull" && path === `test/error`) {
+      throw "Mock Error";
     }
     return "";
   }
@@ -138,5 +140,25 @@ describe("#services/git", function() {
     mockFs.restore();
     console.log = consoleLog;
     expect(results).to.deep.equal(["Updating"]);
+  });
+
+  it("gives feedback when git can't pull", function() {
+    const consoleLog = console.log;
+    console.log = function() {};
+    mockFs.restore();
+
+    const sut = proxyquire("./index", {
+      "../../modules/git": git,
+      "../project-directory": projectDirectoryStub
+    });
+    mockFs.restore();
+
+    mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
+
+    const results = sut.runGitPull("test/error");
+
+    mockFs.restore();
+    console.log = consoleLog;
+    expect(results).to.equal("test/error can't be pulled right now.");
   });
 });
