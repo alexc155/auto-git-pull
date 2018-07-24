@@ -15,11 +15,11 @@ const showWarning = function(args) {
   console.warn(template);
 };
 
-/* istanbul ignore next */
 describe("#utils", function() {
   it("logs info messages", function() {
     var consoleLog = console.log;
     console.log = function() {
+      /* istanbul ignore next */
       if (
         arguments &&
         Array.from(arguments)
@@ -43,6 +43,7 @@ describe("#utils", function() {
   it("logs error messages", function() {
     var consoleError = console.error;
     console.error = function() {
+      /* istanbul ignore next */
       if (
         arguments &&
         Array.from(arguments)
