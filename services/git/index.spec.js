@@ -4,7 +4,11 @@ const { expect } = require("chai");
 const mockFs = require("mock-fs");
 const proxyquire = require("proxyquire").noPreserveCache();
 
-console.error = function() {};
+const mockUtils = {
+  log: {
+    info: function() {}
+  }
+};
 
 const PROJECT_FOLDER = "~/Documents/GitHub";
 
@@ -61,14 +65,12 @@ const DIRECTORY_STRUCTURE = Object.assign({}, GIT_PROJECTS, {
 
 describe("#services/git", function() {
   it("fetches projects", function() {
-    const consoleLog = console.log;
-    console.log = function() {};
-
     mockFs.restore();
 
     const sut = proxyquire("./index", {
       "../../modules/git": git,
-      "../project-directory": projectDirectoryStub
+      "../project-directory": projectDirectoryStub,
+      "../../utils": mockUtils
     });
 
     mockFs.restore();
@@ -77,7 +79,6 @@ describe("#services/git", function() {
     const results = [...sut.fetchProjectsFromGit()];
 
     mockFs.restore();
-    console.log = consoleLog;
     expect(results).to.deep.equal(["", "done.", ""]);
   });
 
@@ -123,13 +124,12 @@ describe("#services/git", function() {
   });
 
   it("pulls projects", function() {
-    const consoleLog = console.log;
-    console.log = function() {};
     mockFs.restore();
 
     const sut = proxyquire("./index", {
       "../../modules/git": git,
-      "../project-directory": projectDirectoryStub
+      "../project-directory": projectDirectoryStub,
+      "../../utils": mockUtils
     });
     mockFs.restore();
 
@@ -138,18 +138,16 @@ describe("#services/git", function() {
     const results = [...sut.pullProjectsFromGit()];
 
     mockFs.restore();
-    console.log = consoleLog;
     expect(results).to.deep.equal(["Updating"]);
   });
 
   it("gives feedback when git can't pull", function() {
-    const consoleLog = console.log;
-    console.log = function() {};
     mockFs.restore();
 
     const sut = proxyquire("./index", {
       "../../modules/git": git,
-      "../project-directory": projectDirectoryStub
+      "../project-directory": projectDirectoryStub,
+      "../../utils": mockUtils
     });
     mockFs.restore();
 
@@ -158,7 +156,6 @@ describe("#services/git", function() {
     const results = sut.runGitPull("test/error");
 
     mockFs.restore();
-    console.log = consoleLog;
     expect(results).to.equal("test/error can't be pulled right now.");
   });
 });

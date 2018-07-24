@@ -3,7 +3,12 @@
 const { expect } = require("chai");
 const mockFs = require("mock-fs");
 const proxyquire = require("proxyquire").noPreserveCache();
-const sinon = require("sinon");
+
+const mockUtils = {
+  log: {
+    info: function() {}
+  }
+};
 
 const configWithIncludedProjects = {
   readConfig: function(setting, defaultValue) {
@@ -76,15 +81,12 @@ describe("#services/included-project-directories", function() {
     mockFs.restore();
 
     const sut = proxyquire("./index", {
-      "../../config": configWithIncludedAndExcludedProjects
+      "../../config": configWithIncludedAndExcludedProjects,
+      "../../utils": mockUtils
     });
     mockFs.restore();
 
     mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
-
-    const consoleLog = console.log;
-    console.log = function(msg) {};
-    sinon.spy(console, "log");
 
     const includedProjectDirectories = sut.addIncludedProjectDirectory(
       "~/Documents/GitHub/directory1/project3/"
@@ -93,14 +95,6 @@ describe("#services/included-project-directories", function() {
     mockFs.restore();
 
     expect(includedProjectDirectories.sort()).to.be.deep.equal([].sort());
-    expect(
-      console.log.calledWith(
-        "You can't have included *and* excluded project directories."
-      )
-    ).to.equal(true);
-
-    console.log.restore();
-    console.log = consoleLog;
   });
 
   it("removes an included project directory", function() {

@@ -15,6 +15,7 @@ function showHelp() {
   Fetches all repos from Git in a working folder, and optionally pulls changes if there are no conflicts.
 
   Available commands:
+
     --set-projects-directory  | -spd    <PATH>
     
     --fetch                   | -f
@@ -48,7 +49,7 @@ function showHelp() {
     * To fetch from only a subset of projects, 
       either add each project using '--add-include <PATH>' 
         (which means the main projects directory will be ignored), 
-      or exclude paths from the main projects directory using '--remove-include <PATH>'
+      or exclude paths from the main projects directory using '--add-exclude <PATH>'
 `);
 }
 

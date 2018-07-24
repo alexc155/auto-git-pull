@@ -4,6 +4,12 @@ const { expect } = require("chai");
 const mockFs = require("mock-fs");
 const proxyquire = require("proxyquire").noPreserveCache();
 
+const mockUtils = {
+  log: {
+    error: function() {}
+  }
+};
+
 const PROJECT_FOLDER = "~/Documents/GitHub";
 
 const configWithIncludedProjects = {
@@ -72,7 +78,8 @@ describe("#services/project-directory", function() {
   it("sets Project Directory", function() {
     mockFs.restore();
     const sut = proxyquire("./index", {
-      "../../config": configWithIncludedProjects
+      "../../config": configWithIncludedProjects,
+      "../../utils": mockUtils
     });
     const result = sut.setProjectsDirectory(PROJECT_FOLDER);
     expect(result).to.be.equal(true);
@@ -81,7 +88,8 @@ describe("#services/project-directory", function() {
   it("errors when setting invalid Projects Directory", function() {
     mockFs.restore();
     const sut = proxyquire("./index", {
-      "../../config": configWithIncludedProjects
+      "../../config": configWithIncludedProjects,
+      "../../utils": mockUtils
     });
     const result = sut.setProjectsDirectory("/invalid/path/");
     expect(result).to.be.equal(false);
@@ -144,7 +152,8 @@ describe("#services/project-directory", function() {
     mockFs.restore();
 
     const sut = proxyquire("./index", {
-      "../../config": configWithoutIncludedProjects
+      "../../config": configWithoutIncludedProjects,
+      "../../utils": mockUtils
     });
 
     mockFs.restore();
@@ -155,8 +164,5 @@ describe("#services/project-directory", function() {
     mockFs.restore();
 
     expect(results).to.deep.equal([]);
-    expect(
-      console.error.calledWith("buildProjectDirectoryList error: ")
-    ).to.equal(true);
   });
 });

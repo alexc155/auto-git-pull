@@ -1,13 +1,15 @@
 "use strict";
 
+const logger = require("logger-rotate");
+
 module.exports = {
   log: {
     info: function() {
-      console.log.apply(console, arguments);
+      logger.logSync(Array.from(arguments).join(" "));
     },
 
     error: function() {
-      console.error.apply(console, arguments);
+      logger.errorSync(Array.from(arguments).join(" "));
     }
   }
 };
