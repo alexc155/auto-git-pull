@@ -31,12 +31,12 @@
     "coveralls": "^3.0.2",
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
-    "mock-fs": "^4.5.0",
+    "mock-fs": "^4.6.0",
     "proxyquire": "^2.0.1",
-    "sinon": "^6.1.4"
+    "sinon": "^6.1.5"
   },
   "dependencies": {
-    "logger-rotate": "^0.2.2",
+    "logger-rotate": "^0.3.1",
     "update-notifier": "^2.5.0"
   },
   "readme": "./readme.md"

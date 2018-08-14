@@ -3,7 +3,7 @@
 const { existsSync, writeFileSync, readFileSync } = require("fs");
 const { log } = require("../utils");
 
-const CONFIG_FILE = "./git-autofetch.config";
+const CONFIG_FILE = `${__dirname}/../git-autofetch.config`;
 
 function validateProjectsDirectory(path) {
   if (!existsSync(path)) {
@@ -34,7 +34,7 @@ function writeConfig(setting, value) {
 
 function readConfig(setting, defaultValue) {
   if (!existsSync(CONFIG_FILE)) {
-    log.error("Config file does not exist");
+    log.error(`Config file ${CONFIG_FILE} does not exist`);
     return;
   }
 

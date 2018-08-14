@@ -9,16 +9,16 @@ const { log } = require("../../utils");
 const git = require("../../modules/git");
 const { buildProjectDirectoryList } = require("../project-directory");
 
-function fetchFromGit(path) {
-  log.info(`Fetching ${path}`);
+function fetchFromGit(path, silent) {
+  silent ? log.infoSilent(`Fetching ${path}`) : log.info(`Fetching ${path}`);
   return git.gitExec(path, "fetch");
 }
 
-function* fetchProjectsFromGit() {
+function* fetchProjectsFromGit(silent) {
   const projectDirectoryList = buildProjectDirectoryList();
 
   for (const projectDirectory of projectDirectoryList) {
-    yield fetchFromGit(projectDirectory);
+    yield fetchFromGit(projectDirectory, silent);
   }
 }
 
@@ -47,8 +47,8 @@ function* getPullableProjects() {
   }
 }
 
-function runGitPull(path) {
-  log.info(`Pulling ${path}`);
+function runGitPull(path, silent) {
+  silent ? log.infoSilent(`Pulling ${path}`) : log.info(`Pulling ${path}`);
   let gitPullResult;
   try {
     gitPullResult = git.gitExec(path, "pull");
@@ -58,9 +58,9 @@ function runGitPull(path) {
   return gitPullResult;
 }
 
-function* pullProjectsFromGit() {
+function* pullProjectsFromGit(silent) {
   for (const project of getPullableProjects()) {
-    yield runGitPull(project);
+    yield runGitPull(project, silent);
   }
 }
 

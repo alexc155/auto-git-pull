@@ -7,8 +7,10 @@ const git = require("./services/git");
 const includedProjectDirectories = require("./services/included-project-directories");
 const excludedProjectDirectories = require("./services/excluded-project-directories");
 const projectDirectory = require("./services/project-directory");
+const scheduler = require("./modules/scheduler");
 const { log } = require("./utils");
 const { EOL } = require("os");
+const { writeFileSync } = require("fs");
 
 function showHelp() {
   log.info(`
@@ -20,7 +22,10 @@ function showHelp() {
     
     --fetch                   | -f
     --pull                    | -p
+    --pull-silent             | -ps
     --status                  | -s
+
+    --schedule-task           | -t
 
     --add-include             | -ai     <PATH>
     --remove-include          | -ri     <PATH>
@@ -50,6 +55,8 @@ function showHelp() {
       either add each project using '--add-include <PATH>' 
         (which means the main projects directory will be ignored), 
       or exclude paths from the main projects directory using '--add-exclude <PATH>'
+
+    * To automate the process, use '-t' to schedule a recurring task every 2 minutes.
 `);
 }
 
@@ -60,6 +67,12 @@ function main() {
   }).notify({
     isGlobal: true
   });
+
+  const logLocation = `${__dirname}/logs`;
+  writeFileSync(
+    `${__dirname}/node_modules/logger-rotate/logger-rotate.config.json`,
+    `{"LOG_FOLDER":"${logLocation}"}`
+  );
 
   let action = process.argv[2];
   action = action || "";
@@ -84,11 +97,21 @@ function main() {
       break;
     case "-p":
     case "--pull":
-      fetchResults = [...git.fetchProjectsFromGit()];
+      fetchResults = [...git.fetchProjectsFromGit(false)];
       if (fetchResults.length > 0) {
-        const pullResults = [...git.pullProjectsFromGit()];
+        const pullResults = [...git.pullProjectsFromGit(false)];
         if (pullResults.length > 0) {
           log.info(EOL, pullResults.join(EOL + EOL + " "));
+        }
+      }
+      break;
+    case "-ps":
+    case "--pull-silent":
+      fetchResults = [...git.fetchProjectsFromGit(true)];
+      if (fetchResults.length > 0) {
+        const pullResults = [...git.pullProjectsFromGit(true)];
+        if (pullResults.length > 0) {
+          log.infoSilent(EOL, pullResults.join(EOL + EOL + " "));
         }
       }
       break;
@@ -187,6 +210,12 @@ function main() {
           EOL,
           excProjectDirs.join(EOL + " ")
         );
+      }
+      break;
+    case "--schedule-task":
+    case "-t":
+      if (scheduler.schedulePull()) {
+        log.info(EOL, "OK");
       }
       break;
     case "-h":

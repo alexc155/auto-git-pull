@@ -13,7 +13,7 @@ const sut = proxyquire("./index", {
   child_process: childProcess
 });
 
-describe("#git", function() {
+describe("#modules/git", function() {
   it("tests git", function() {
     const result = sut.gitExec("./", "fetch");
     expect(result).to.equal("OK");

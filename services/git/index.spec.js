@@ -6,7 +6,8 @@ const proxyquire = require("proxyquire").noPreserveCache();
 
 const mockUtils = {
   log: {
-    info: function() {}
+    info: function() {},
+    infoSilent: function() {}
   }
 };
 
@@ -76,7 +77,25 @@ describe("#services/git", function() {
     mockFs.restore();
     mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
 
-    const results = [...sut.fetchProjectsFromGit()];
+    const results = [...sut.fetchProjectsFromGit(false)];
+
+    mockFs.restore();
+    expect(results).to.deep.equal(["", "done.", ""]);
+  });
+
+  it("silently fetches projects", function() {
+    mockFs.restore();
+
+    const sut = proxyquire("./index", {
+      "../../modules/git": git,
+      "../project-directory": projectDirectoryStub,
+      "../../utils": mockUtils
+    });
+
+    mockFs.restore();
+    mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
+
+    const results = [...sut.fetchProjectsFromGit(true)];
 
     mockFs.restore();
     expect(results).to.deep.equal(["", "done.", ""]);
@@ -139,6 +158,24 @@ describe("#services/git", function() {
 
     mockFs.restore();
     expect(results).to.deep.equal(["Updating"]);
+  });
+
+  it("silently pulls projects", function() {
+    mockFs.restore();
+
+    const sut = proxyquire("./index", {
+      "../../modules/git": git,
+      "../project-directory": projectDirectoryStub,
+      "../../utils": mockUtils
+    });
+    mockFs.restore();
+
+    mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
+
+    const results = sut.runGitPull(`${PROJECT_FOLDER}/project1`, true);
+
+    mockFs.restore();
+    expect(results).to.deep.equal("Updating");
   });
 
   it("gives feedback when git can't pull", function() {
