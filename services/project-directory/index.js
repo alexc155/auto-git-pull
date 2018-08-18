@@ -24,13 +24,15 @@ function setProjectsDirectory(path) {
 function recurseThroughDirectory(projectsDirectory) {
   const dirContents = readdirSync(projectsDirectory);
 
-  dirContents.forEach(directoryEntry => {
-    const path = projectsDirectory + "/" + directoryEntry;
+  dirContents.forEach(directoryEntry => {    
+    if (directoryEntry !== "node_modules") {
+      const path = projectsDirectory + "/" + directoryEntry;
 
-    if (git.checkIsRepo(path)) {
-      gitRepos.push(path);
-    } else if (lstatSync(path).isDirectory()) {
-      recurseThroughDirectory(path);
+      if (git.checkIsRepo(path)) {
+        gitRepos.push(path);
+      } else if (lstatSync(path).isDirectory()) {
+        recurseThroughDirectory(path);
+      }
     }
   });
 }
@@ -47,7 +49,9 @@ function buildProjectDirectoryList() {
     }
 
     const projectsDirectory = readConfig("projects_directory");
+
     gitRepos = [];
+
     recurseThroughDirectory(projectsDirectory);
 
     const excludedProjectDirectories = readConfig(

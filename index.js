@@ -13,7 +13,7 @@ const { EOL } = require("os");
 const { writeFileSync } = require("fs");
 
 function showHelp() {
-  log.info(`
+  console.log(`
   Fetches all repos from Git in a working folder, and optionally pulls changes if there are no conflicts.
 
   Available commands:
@@ -68,7 +68,8 @@ function main() {
     isGlobal: true
   });
 
-  const logLocation = `${__dirname}/logs`;
+  const logLocation = `${__dirname.replace(/\\/g, "/")}/logs`;
+
   writeFileSync(
     `${__dirname}/node_modules/logger-rotate/logger-rotate.config.json`,
     `{"LOG_FOLDER":"${logLocation}"}`
@@ -84,7 +85,7 @@ function main() {
   switch (action.toLowerCase()) {
     case "-spd":
     case "--set-projects-directory":
-      if (projectDirectory.setProjectsDirectory(args[0])) {
+      if (projectDirectory.setProjectsDirectory(args[0].replace(/\\/g, "/"))) {
         log.info(EOL, "OK");
       }
       break;
@@ -97,6 +98,7 @@ function main() {
       break;
     case "-p":
     case "--pull":
+      log.info("Pulling...");
       fetchResults = [...git.fetchProjectsFromGit(false)];
       if (fetchResults.length > 0) {
         const pullResults = [...git.pullProjectsFromGit(false)];
@@ -107,6 +109,7 @@ function main() {
       break;
     case "-ps":
     case "--pull-silent":
+      log.infoSilent("Pulling...");
       fetchResults = [...git.fetchProjectsFromGit(true)];
       if (fetchResults.length > 0) {
         const pullResults = [...git.pullProjectsFromGit(true)];
@@ -123,7 +126,7 @@ function main() {
     case "-ai":
     case "--add-include":
       incProjectDirs = includedProjectDirectories.addIncludedProjectDirectory(
-        args[0]
+        args[0].replace(/\\/g, "/")
       );
       if (incProjectDirs) {
         log.info(
@@ -137,7 +140,7 @@ function main() {
     case "-ri":
     case "--remove-include":
       incProjectDirs = includedProjectDirectories.removeIncludedProjectDirectory(
-        args[0]
+        args[0].replace(/\\/g, "/")
       );
       if (incProjectDirs) {
         log.info(
@@ -169,7 +172,7 @@ function main() {
     case "-ax":
     case "--add-exclude":
       excProjectDirs = excludedProjectDirectories.addExcludedProjectDirectory(
-        args[0]
+        args[0].replace(/\\/g, "/")
       );
       if (excProjectDirs) {
         log.info(
@@ -183,7 +186,7 @@ function main() {
     case "-rx":
     case "--remove-exclude":
       excProjectDirs = excludedProjectDirectories.removeExcludedProjectDirectory(
-        args[0]
+        args[0].replace(/\\/g, "/")
       );
       if (excProjectDirs) {
         log.info(
@@ -214,7 +217,7 @@ function main() {
       break;
     case "--schedule-task":
     case "-t":
-      if (scheduler.schedulePull()) {
+      if (scheduler.schedulePull() > 0) {
         log.info(EOL, "OK");
       }
       break;

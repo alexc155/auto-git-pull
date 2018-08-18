@@ -3,7 +3,7 @@
 const { existsSync, writeFileSync, readFileSync } = require("fs");
 const { log } = require("../utils");
 
-const CONFIG_FILE = `${__dirname}/../git-autofetch.config`;
+const CONFIG_FILE = `${__dirname.replace(/\\/g, "/")}/../git-autofetch.config`;
 
 function validateProjectsDirectory(path) {
   if (!existsSync(path)) {

@@ -56,6 +56,13 @@ const GIT_PROJECTS = {
   project2: {
     ".git": {}
   },
+  project4: {
+    node_modules: {
+      blah: {
+        ".git": {}
+      }
+    }
+  },
   directory1: {
     project3: {
       ".git": {}

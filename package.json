@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "logger-rotate": "^0.3.1",
+    "readline-sync": "^1.4.9",
     "update-notifier": "^2.5.0"
   },
   "readme": "./readme.md"

@@ -3,8 +3,9 @@
 const { expect } = require("chai");
 const mockFs = require("mock-fs");
 const proxyquire = require("proxyquire").noPreserveCache();
-const { appendFileSync, readFileSync, existsSync } = require("fs");
+const { appendFileSync, readFileSync } = require("fs");
 const os = require("os");
+const sinon = require("sinon");
 
 function spawnSyncOK() {
   return { error: false, stdout: "OK" };
@@ -22,22 +23,25 @@ function execSync(cmd) {
   if (cmd === "crontab tmp_cron") {
     appendFileSync("./mockSuccess", "OK", { encoding: "utf8" });
     return;
+  } else if (cmd && cmd.indexOf("schtasks /create") >= 0) {
+    appendFileSync("./mockSuccess", "OK", { encoding: "utf8" });
+    return;
   }
   appendFileSync("./tmp_cron", os.EOL + "OK", { encoding: "utf8" });
 }
 
 const childProcessOK = {
-  spawnSync: cmd => spawnSyncOK(),
+  spawnSync: () => spawnSyncOK(),
   execSync: cmd => execSync(cmd)
 };
 
 const childProcessMissingFile = {
-  spawnSync: cmd => spawnSyncMissingFile(),
-  execSync: cmd => execSync()
+  spawnSync: () => spawnSyncMissingFile(),
+  execSync: () => execSync()
 };
 
 const childProcessError = {
-  spawnSync: cmd => spawnSyncError()
+  spawnSync: () => spawnSyncError()
 };
 
 const osUnix = {
@@ -48,7 +52,25 @@ const osUnix = {
 
 const osWindows = {
   type: () => {
-    return "Win32";
+    return "Windows_NT";
+  }
+};
+
+const osUnknown = {
+  type: () => {
+    return "Unknown";
+  }
+};
+
+const readLineSync = {
+  question: () => {
+    return "password";
+  }
+};
+
+const mockUtils = {
+  log: {
+    error: function() {}
   }
 };
 
@@ -172,12 +194,13 @@ describe("#modules/scheduler", function() {
     mockFs.restore();
   });
 
-  it("doesn't yet add a Windows job", function() {
+  it("adds a Windows job", function() {
     mockFs.restore();
 
     const sut = proxyquire("./index", {
       child_process: childProcessOK,
-      os: osWindows
+      os: osWindows,
+      "readline-sync": readLineSync
     });
 
     mockFs({
@@ -186,7 +209,7 @@ describe("#modules/scheduler", function() {
 
     sut.addJob(2, "job");
 
-    expect(existsSync("./mockSuccess")).to.equal(false);
+    expect(readFileSync("./mockSuccess", { encoding: "utf8" })).to.equal("OK");
 
     mockFs.restore();
   });
@@ -208,5 +231,23 @@ describe("#modules/scheduler", function() {
     expect(readFileSync("./mockSuccess", { encoding: "utf8" })).to.equal("OK");
 
     mockFs.restore();
+  });
+
+  it("errors if it can't recognize the OS when adding a job", function() {
+    mockFs.restore();
+
+    const sut = proxyquire("./index", {
+      child_process: childProcessOK,
+      os: osUnknown,
+      "../../utils": mockUtils
+    });
+
+    sinon.spy(mockUtils.log, "error");
+
+    mockFs({ "./": {} });
+
+    sut.addJob(2, "job");
+
+    expect(mockUtils.log.error.called).to.equal(true);
   });
 });

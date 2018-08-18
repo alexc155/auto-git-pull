@@ -3,6 +3,8 @@
 const { execSync, spawnSync } = require("child_process");
 const { readFileSync } = require("fs");
 const os = require("os");
+const readlineSync = require("readline-sync");
+const { log } = require("../../utils");
 
 function exportExistingCronJobs() {
   let ct;
@@ -45,14 +47,33 @@ function addJobToCrontab(frequencyPattern, job) {
   execSync("rm tmp_cron", { encoding: "utf8" });
 }
 
+function addWindowsScheduledTask(frequencyInMinutes, job, username, password) {
+  execSync(
+    `schtasks /create /F /RU ${username} /RP ${password} /sc minute /mo ${frequencyInMinutes} /tn "Git-AutoFetch" /tr "${job}"`
+  );
+}
+
 function addJob(frequencyInMinutes, job) {
   if (os.type() === "Linux" || os.type() === "Darwin") {
-    addJobToCrontab(`*/${frequencyInMinutes} * * * *`, job);
+    addJobToCrontab(`*/${frequencyInMinutes} * * * *`, `/usr/local/bin/${job}`);
+  } else if (os.type() === "Windows_NT") {
+    const password = readlineSync.question(
+      "Please enter your windows login password "
+    );
+
+    addWindowsScheduledTask(
+      frequencyInMinutes,
+      job,
+      process.env.USERNAME,
+      password
+    );
+  } else {
+    log.error("Sorry, the operating system is not recognized");
   }
 }
 
 function schedulePull() {
-  addJob(2, `/usr/local/bin/node ${__dirname}/../../index.js -ps`);
+  addJob(2, `node ${__dirname.replace(/\\/g, "/")}/../../index.js -ps`);
   return true;
 }
 
