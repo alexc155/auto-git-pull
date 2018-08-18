@@ -51,6 +51,20 @@ function addWindowsScheduledTask(frequencyInMinutes, job, username, password) {
   execSync(
     `schtasks /create /F /RU ${username} /RP ${password} /sc minute /mo ${frequencyInMinutes} /tn "Git-AutoFetch" /tr "${job}"`
   );
+  log.infoConsole("A Scheduled Task has been created.");
+  log.infoConsole(
+    "However, it isn't possible to automate this task to run when the computer is not plugged in."
+  );
+  log.infoConsole(
+    "To fix this, find the task called Git-AutoFetch in the task library, and do the following:"
+  );
+  log.infoConsole("Right-click and choose Properties.");
+  log.infoConsole(
+    "In the Conditions tab, untick 'Start the task only if the computer is on AC power'"
+  );
+  log.infoConsole("Choose OK");
+  readlineSync.question("Press Enter to continue...");
+  execSync("taskschd.msc");
 }
 
 function addJob(frequencyInMinutes, job) {

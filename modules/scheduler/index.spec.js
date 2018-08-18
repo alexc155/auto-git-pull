@@ -70,7 +70,8 @@ const readLineSync = {
 
 const mockUtils = {
   log: {
-    error: function() {}
+    error: function() {},
+    infoConsole: function() {}
   }
 };
 
@@ -200,7 +201,8 @@ describe("#modules/scheduler", function() {
     const sut = proxyquire("./index", {
       child_process: childProcessOK,
       os: osWindows,
-      "readline-sync": readLineSync
+      "readline-sync": readLineSync,
+      "../../utils": mockUtils
     });
 
     mockFs({

@@ -40,4 +40,14 @@ describe("#utils", function() {
 
     mockLogger.errorSync.restore();
   });
+
+  it("logs info messages to console", function() {
+    sinon.stub(console, "log");
+
+    sut.log.infoConsole("INFO");
+
+    expect(console.log.calledWith("INFO")).to.equal(true);
+
+    console.log.restore();
+  });
 });

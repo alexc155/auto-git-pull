@@ -12,6 +12,10 @@ module.exports = {
       logger.logSync(Array.from(arguments).join(" "), true);
     },
 
+    infoConsole: function() {
+      console.log.apply(console, arguments);
+    },
+
     error: function() {
       logger.errorSync(Array.from(arguments).join(" "), false);
     }
