@@ -49,7 +49,7 @@ function addJobToCrontab(frequencyPattern, job) {
 
 function addWindowsScheduledTask(frequencyInMinutes, job, username, password) {
   execSync(
-    `schtasks /create /F /RU ${username} /RP ${password} /sc minute /mo ${frequencyInMinutes} /tn "Git-AutoFetch" /tr "${job}"`
+    `schtasks /create /F /RU ${username} /RP ${password} /sc minute /mo ${frequencyInMinutes} /tn "gitpull" /tr "${job}"`
   );
   log.infoConsole("");
   log.infoConsole("A Scheduled Task has been created.");
@@ -57,7 +57,7 @@ function addWindowsScheduledTask(frequencyInMinutes, job, username, password) {
     "However, it isn't possible to automate this task to run when the computer is not plugged in."
   );
   log.infoConsole(
-    "To fix this, find the task called Git-AutoFetch in the task library, and do the following:"
+    "To fix this, find the task called gitpull in the task library, and do the following:"
   );
   log.infoConsole("Right-click and choose Properties.");
   log.infoConsole(
