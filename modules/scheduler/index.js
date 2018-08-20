@@ -51,6 +51,7 @@ function addWindowsScheduledTask(frequencyInMinutes, job, username, password) {
   execSync(
     `schtasks /create /F /RU ${username} /RP ${password} /sc minute /mo ${frequencyInMinutes} /tn "Git-AutoFetch" /tr "${job}"`
   );
+  log.infoConsole("");
   log.infoConsole("A Scheduled Task has been created.");
   log.infoConsole(
     "However, it isn't possible to automate this task to run when the computer is not plugged in."
@@ -63,8 +64,8 @@ function addWindowsScheduledTask(frequencyInMinutes, job, username, password) {
     "In the Conditions tab, untick 'Start the task only if the computer is on AC power'"
   );
   log.infoConsole("Choose OK");
+  log.infoConsole("");
   readlineSync.question("Press Enter to continue...");
-  execSync("taskschd.msc");
 }
 
 function addJob(frequencyInMinutes, job) {
@@ -72,7 +73,9 @@ function addJob(frequencyInMinutes, job) {
     addJobToCrontab(`*/${frequencyInMinutes} * * * *`, `/usr/local/bin/${job}`);
   } else if (os.type() === "Windows_NT") {
     const password = readlineSync.question(
-      "Please enter your windows login password "
+      "Please enter your windows login password ", {
+        hideEchoBack: true // The typed text on screen is hidden by `*` (default).
+      }
     );
 
     addWindowsScheduledTask(
