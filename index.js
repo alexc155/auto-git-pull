@@ -44,14 +44,14 @@ function showHelp() {
 
   Example usage:
     $ gitpull -spd /Users/you/Documents/GitHub
-    $ gitpull -f
     $ gitpull -p
+    $ gitpull -pt
 
   Notes:
     * You must set a projects directory before fetching or pulling.
-      This should be the root folder of you Git projects.
+      This should be the root folder of your Git projects.
     * The 'Pull' command performs a fetch & pull.
-    * 'Pull' will only attempt to pull changes if there are conflicts or changes to the local tree.
+    * 'Pull' will only attempt to pull changes if there are no conflicts or changes to the local tree.
     * The more out of date a repo is, the longer it will take to fetch and pull.
     
     * To fetch from only a subset of projects, 
@@ -59,7 +59,7 @@ function showHelp() {
         (which means the main projects directory will be ignored), 
       or exclude paths from the main projects directory using '--add-exclude <PATH>'
 
-    * To automate the process, use '-t' to schedule a recurring task every 2 minutes.
+    * To automate the process, use '-pt' to schedule a recurring pull task every 2 minutes.
 `);
 }
 

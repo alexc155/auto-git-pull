@@ -1,7 +1,7 @@
 {
   "name": "gitpull",
   "version": "0.1.0",
-  "description": "Fetches all repos from Git in a working folder, and optionally pulls changes if there are no conflicts.",
+  "description": "Schedules fetching all repos in a working folder from Git, and optionally pulls changes if there are no conflicts.",
   "main": "index.js",
   "scripts": {
     "test": "mocha $(find . -name '*.spec.js' ! -ipath '*node_modules*') --reporter spec",
