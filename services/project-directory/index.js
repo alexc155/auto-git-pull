@@ -24,7 +24,7 @@ function setProjectsDirectory(path) {
 function recurseThroughDirectory(projectsDirectory) {
   const dirContents = readdirSync(projectsDirectory);
 
-  dirContents.forEach(directoryEntry => {    
+  dirContents.forEach(directoryEntry => {
     if (directoryEntry !== "node_modules") {
       const path = projectsDirectory + "/" + directoryEntry;
 
@@ -43,6 +43,17 @@ function buildProjectDirectoryList() {
       "included_project_directories",
       []
     );
+
+    if (!includedProjectDirectories) {
+      log.error("");
+      log.error(
+        "Have you set the project directory or set a list of directories to include?"
+      );
+      log.error(
+        "( Use the '--set-projects-directory' or '--add-include option' )"
+      );
+      return [];
+    }
 
     if (includedProjectDirectories.length > 0) {
       return includedProjectDirectories;

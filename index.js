@@ -11,21 +11,24 @@ const scheduler = require("./modules/scheduler");
 const { log } = require("./utils");
 const { EOL } = require("os");
 const { writeFileSync } = require("fs");
+const path = require("path");
 
 function showHelp() {
   console.log(`
-  Fetches all repos from Git in a working folder, and optionally pulls changes if there are no conflicts.
+  Schedules fetching all repos in a working folder from Git, and optionally pulls changes if there are no conflicts.
 
   Available commands:
 
     --set-projects-directory  | -spd    <PATH>
     
     --fetch                   | -f
+    --fetch-silent            | -fs
     --pull                    | -p
     --pull-silent             | -ps
     --status                  | -s
 
-    --schedule-task           | -t
+    --schedule-fetch-task     | -ft
+    --schedule-pull-task      | -pt
 
     --add-include             | -ai     <PATH>
     --remove-include          | -ri     <PATH>
@@ -85,12 +88,23 @@ function main() {
   switch (action.toLowerCase()) {
     case "-spd":
     case "--set-projects-directory":
-      if (projectDirectory.setProjectsDirectory(args[0].replace(/\\/g, "/"))) {
+      const dir = args[0].replace(/\\/g, "/");
+
+      if (projectDirectory.setProjectsDirectory(path.resolve(dir))) {
         log.info(EOL, "OK");
       }
       break;
     case "-f":
     case "--fetch":
+      log.info("Fetching...");
+      fetchResults = [...git.fetchProjectsFromGit()];
+      if (fetchResults.length > 0) {
+        log.info(EOL, "OK");
+      }
+      break;
+    case "-fs":
+    case "--fetch-silent":
+      log.infoSilent("Fetching...");
       fetchResults = [...git.fetchProjectsFromGit()];
       if (fetchResults.length > 0) {
         log.info(EOL, "OK");
@@ -215,9 +229,15 @@ function main() {
         );
       }
       break;
-    case "--schedule-task":
-    case "-t":
-      if (scheduler.schedulePull() > 0) {
+    case "--schedule-fetch-task":
+    case "-ft":
+      if (scheduler.scheduleTask("-fs") > 0) {
+        log.info(EOL, "OK");
+      }
+      break;
+    case "--schedule-pull-task":
+    case "-pt":
+      if (scheduler.scheduleTask("-ps") > 0) {
         log.info(EOL, "OK");
       }
       break;

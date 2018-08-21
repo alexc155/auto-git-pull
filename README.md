@@ -5,4 +5,5 @@
 
 # gitpull
 
-Fetches all repos from Git in a working folder, and optionally pulls changes if there are no conflicts.
+Schedules fetching all repos in a working folder from Git, and optionally pulls changes if there are no conflicts.
+

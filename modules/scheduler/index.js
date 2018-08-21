@@ -1,7 +1,7 @@
 "use strict";
 
 const { execSync, spawnSync } = require("child_process");
-const { readFileSync } = require("fs");
+const { readFileSync, writeFileSync } = require("fs");
 const os = require("os");
 const readlineSync = require("readline-sync");
 const { log } = require("../../utils");
@@ -26,13 +26,23 @@ function exportExistingCronJobs() {
 }
 
 function maybeAppendJob(frequencyPattern, job) {
-  const currentJobs = readFileSync("tmp_cron", { encoding: "utf8" });
+  const currentJobs = readFileSync("tmp_cron", { encoding: "utf8" })
+    .toString()
+    .split("\n");
 
-  if (currentJobs.indexOf(job) < 0) {
-    execSync(`echo '${frequencyPattern} ${job}' >> tmp_cron`, {
-      encoding: "utf8"
-    });
-  }
+  const newCurrentjobs = [];
+
+  currentJobs.forEach(currentJob => {
+    if (currentJob.indexOf("gitpull") < 0) {
+      newCurrentjobs.push(currentJob);
+    }
+  });
+
+  writeFileSync("tmp_cron", newCurrentjobs.join("\n"));
+
+  execSync(`echo '${frequencyPattern} ${job}' >> tmp_cron`, {
+    encoding: "utf8"
+  });
 }
 
 function addJobToCrontab(frequencyPattern, job) {
@@ -73,7 +83,8 @@ function addJob(frequencyInMinutes, job) {
     addJobToCrontab(`*/${frequencyInMinutes} * * * *`, `/usr/local/bin/${job}`);
   } else if (os.type() === "Windows_NT") {
     const password = readlineSync.question(
-      "Please enter your windows login password ", {
+      "Please enter your windows login password ",
+      {
         hideEchoBack: true // The typed text on screen is hidden by `*` (default).
       }
     );
@@ -89,13 +100,13 @@ function addJob(frequencyInMinutes, job) {
   }
 }
 
-function schedulePull() {
-  addJob(2, `node ${__dirname.replace(/\\/g, "/")}/../../index.js -ps`);
+function scheduleTask(task) {
+  addJob(2, `node ${__dirname.replace(/\\/g, "/")}/../../index.js ${task}`);
   return true;
 }
 
 module.exports = {
-  schedulePull,
+  scheduleTask,
   exportExistingCronJobs,
   maybeAppendJob,
   addJobToCrontab,

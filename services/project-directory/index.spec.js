@@ -3,6 +3,7 @@
 const { expect } = require("chai");
 const mockFs = require("mock-fs");
 const proxyquire = require("proxyquire").noPreserveCache();
+const sinon = require("sinon");
 
 const mockUtils = {
   log: {
@@ -45,6 +46,12 @@ const configWithoutIncludedProjects = {
       return defaultValue;
     }
     return PROJECT_FOLDER;
+  }
+};
+
+const brokenConfig = {
+  readConfig: function() {
+    return;
   }
 };
 
@@ -171,5 +178,26 @@ describe("#services/project-directory", function() {
     mockFs.restore();
 
     expect(results).to.deep.equal([]);
+  });
+
+  it("errors when config hasn't been initialised", function() {
+    mockFs.restore();
+    const sut = proxyquire("./index", {
+      "../../utils": mockUtils,
+      "../../config": brokenConfig
+    });
+    mockFs({ "~/Documents/GitHub": DIRECTORY_STRUCTURE, "./": {} });
+
+    sinon.spy(mockUtils.log, "error");
+
+    const result = sut.buildProjectDirectoryList();
+    mockFs.restore();
+    const expectedResult = [];
+
+    expect(result).to.deep.equal(expectedResult);
+
+    expect(mockUtils.log.error.called).to.equal(true);
+
+    mockUtils.log.error.restore();
   });
 });

@@ -27,7 +27,7 @@ function execSync(cmd) {
     appendFileSync("./mockSuccess", "OK", { encoding: "utf8" });
     return;
   }
-  appendFileSync("./tmp_cron", os.EOL + "OK", { encoding: "utf8" });
+  appendFileSync("./tmp_cron", os.EOL + "gitpull", { encoding: "utf8" });
 }
 
 const childProcessOK = {
@@ -86,7 +86,7 @@ describe("#modules/scheduler", function() {
     sut.exportExistingCronJobs();
 
     expect(readFileSync("./tmp_cron", { encoding: "utf8" })).to.equal(
-      os.EOL + "OK"
+      os.EOL + "gitpull"
     );
 
     mockFs.restore();
@@ -104,7 +104,7 @@ describe("#modules/scheduler", function() {
     sut.exportExistingCronJobs();
 
     expect(readFileSync("./tmp_cron", { encoding: "utf8" })).to.equal(
-      os.EOL + "OK"
+      os.EOL + "gitpull"
     );
 
     mockFs.restore();
@@ -128,12 +128,12 @@ describe("#modules/scheduler", function() {
       child_process: childProcessOK
     });
 
-    mockFs({ "./tmp_cron": "Exisitng Cron Job Entry" });
+    mockFs({ "./tmp_cron": "Existing Cron Job Entry" });
 
     sut.maybeAppendJob("frequencyPattern", "job");
 
     expect(readFileSync("./tmp_cron", { encoding: "utf8" })).to.equal(
-      "Exisitng Cron Job Entry" + os.EOL + "OK"
+      "Existing Cron Job Entry" + os.EOL + "gitpull"
     );
 
     mockFs.restore();
@@ -148,13 +148,13 @@ describe("#modules/scheduler", function() {
 
     mockFs({
       "./tmp_cron":
-        "Exisitng Cron Job Entry" + os.EOL + "OK" + os.EOL + "Another"
+        "Existing Cron Job Entry" + os.EOL + "gitpull" + os.EOL + "Another"
     });
 
-    sut.maybeAppendJob("frequencyPattern", "OK");
+    sut.maybeAppendJob("frequencyPattern", "gitpull");
 
     expect(readFileSync("./tmp_cron", { encoding: "utf8" })).to.equal(
-      "Exisitng Cron Job Entry" + os.EOL + "OK" + os.EOL + "Another"
+      "Existing Cron Job Entry" + os.EOL + "Another" + os.EOL + "gitpull"
     );
 
     mockFs.restore();
@@ -228,7 +228,7 @@ describe("#modules/scheduler", function() {
       "./": {}
     });
 
-    sut.schedulePull();
+    sut.scheduleTask("-ps");
 
     expect(readFileSync("./mockSuccess", { encoding: "utf8" })).to.equal("OK");
 
