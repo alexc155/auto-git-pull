@@ -8,12 +8,15 @@ function checkIsRepo(path) {
 }
 
 function gitExec(path, cmd) {
-  const result = execSync(`git ${cmd}`, {
-    cwd: path,
-    stdio: "pipe",
-    encoding: "utf8"
-  });
-  return result;
+  try {
+    return execSync(`git ${cmd}`, {
+      cwd: path,
+      stdio: "pipe",
+      encoding: "utf8"
+    });
+  } catch (error) {
+    return "";
+  }
 }
 
 module.exports = {

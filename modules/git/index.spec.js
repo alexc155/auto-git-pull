@@ -5,6 +5,9 @@ const proxyquire = require("proxyquire");
 
 const childProcess = {
   execSync: cmd => {
+    if (cmd === "git status") {
+      throw "test";
+    }
     return "OK";
   }
 };
@@ -17,5 +20,10 @@ describe("#modules/git", function() {
   it("tests git", function() {
     const result = sut.gitExec("./", "fetch");
     expect(result).to.equal("OK");
+  });
+
+  it("errors when git does", function() {
+    const result = sut.gitExec("./", "status");
+    expect(result).to.equal("");
   });
 });
