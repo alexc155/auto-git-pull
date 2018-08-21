@@ -9,7 +9,7 @@ Schedules fetching all repos in a working folder from Git, and optionally pulls 
 
 auto-git-pull relies on the Git command line tools being installed and runable without interaction. If you can run 'git pull' in a command window, you can run this.
 
-It's frustrating to try to push code to git, only to be told that your version isn't up to date and you must pull changes first - this script automates that pulling so you are always up to date.
+It's frustrating to try to push code to git, only to be told that your version isn't up to date and you must pull changes first. This script automates that pulling so you are always up to date.
 
 ## Installation
 
