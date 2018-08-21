@@ -12,7 +12,7 @@ const mockUtils = {
   }
 };
 
-const CONFIG_FILE = "./gitpull.config";
+const CONFIG_FILE = "./auto-git-pull.config";
 const PROJECTS_DIRECTORY = "~/Documents/GitHub";
 
 const sut = proxyquire("./index", {
@@ -56,7 +56,7 @@ describe("#config", function() {
 
   it("errors writing an invalid setting to the config file", function() {
     mockFs.restore();
-    mockFs({ "./gitpull.config": "corrupt" });
+    mockFs({ "./auto-git-pull.config": "corrupt" });
     const result = sut.writeConfig(undefined, PROJECTS_DIRECTORY);
 
     expect(result).to.equal(false);

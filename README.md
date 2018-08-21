@@ -1,32 +1,32 @@
-[![Build Status](https://travis-ci.org/alexc155/gitpull.svg?branch=master)](https://travis-ci.org/alexc155/gitpull)
-[![Coverage Status](https://coveralls.io/repos/github/alexc155/gitpull/badge.svg?branch=master)](https://coveralls.io/github/alexc155/gitpull?branch=master)
-[![dependencies Status](https://david-dm.org/alexc155/gitpull/status.svg)](https://david-dm.org/alexc155/gitpull)
-[![devDependencies Status](https://david-dm.org/alexc155/gitpull/dev-status.svg)](https://david-dm.org/alexc155/gitpull?type=dev)
+[![Build Status](https://travis-ci.org/alexc155/auto-git-pull.svg?branch=master)](https://travis-ci.org/alexc155/auto-git-pull)
+[![Coverage Status](https://coveralls.io/repos/github/alexc155/auto-git-pull/badge.svg?branch=master)](https://coveralls.io/github/alexc155/auto-git-pull?branch=master)
+[![dependencies Status](https://david-dm.org/alexc155/auto-git-pull/status.svg)](https://david-dm.org/alexc155/auto-git-pull)
+[![devDependencies Status](https://david-dm.org/alexc155/auto-git-pull/dev-status.svg)](https://david-dm.org/alexc155/auto-git-pull?type=dev)
 
-# gitpull
+# auto-git-pull
 
 Schedules fetching all repos in a working folder from Git, and optionally pulls changes if there are no conflicts.
 
-gitpull relies on the Git command line tools being installed and runable without interaction. If you can run 'git pull' in a command window, you can run this.
+auto-git-pull relies on the Git command line tools being installed and runable without interaction. If you can run 'git pull' in a command window, you can run this.
 
 It's frustrating to try to push code to git, only to be told that your version isn't up to date and you must pull changes first - this script automates that pulling so you are always up to date.
 
 ## Installation
 
 ```
-$ npm install -g gitpull
+$ npm install -g auto-git-pull
 ```
 
-Tell `gitpull` where your repos are:
+Tell `auto-git-pull` where your repos are:
 
 ```
-$ gitpull --set-projects-directory ./
+$ auto-git-pull --set-projects-directory ./
 ```
 
 or
 
 ```
-$ gitpull --set-projects-directory /absolute/path/to/projects
+$ auto-git-pull --set-projects-directory /absolute/path/to/projects
 ```
 
 ## Usage
@@ -58,9 +58,9 @@ $ gitpull --set-projects-directory /absolute/path/to/projects
 
 ### Example usage:
 
-    $ gitpull -spd /Users/you/Documents/GitHub
-    $ gitpull -p
-    $ gitpull -pt
+    $ auto-git-pull -spd /Users/you/Documents/GitHub
+    $ auto-git-pull -p
+    $ auto-git-pull -pt
 
 ### Notes:
 

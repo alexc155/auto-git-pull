@@ -27,7 +27,7 @@ function execSync(cmd) {
     appendFileSync("./mockSuccess", "OK", { encoding: "utf8" });
     return;
   }
-  appendFileSync("./tmp_cron", os.EOL + "gitpull", { encoding: "utf8" });
+  appendFileSync("./tmp_cron", os.EOL + "auto-git-pull", { encoding: "utf8" });
 }
 
 const childProcessOK = {
@@ -86,7 +86,7 @@ describe("#modules/scheduler", function() {
     sut.exportExistingCronJobs();
 
     expect(readFileSync("./tmp_cron", { encoding: "utf8" })).to.equal(
-      os.EOL + "gitpull"
+      os.EOL + "auto-git-pull"
     );
 
     mockFs.restore();
@@ -104,7 +104,7 @@ describe("#modules/scheduler", function() {
     sut.exportExistingCronJobs();
 
     expect(readFileSync("./tmp_cron", { encoding: "utf8" })).to.equal(
-      os.EOL + "gitpull"
+      os.EOL + "auto-git-pull"
     );
 
     mockFs.restore();
@@ -133,7 +133,7 @@ describe("#modules/scheduler", function() {
     sut.maybeAppendJob("frequencyPattern", "job");
 
     expect(readFileSync("./tmp_cron", { encoding: "utf8" })).to.equal(
-      "Existing Cron Job Entry" + os.EOL + "gitpull"
+      "Existing Cron Job Entry" + os.EOL + "auto-git-pull"
     );
 
     mockFs.restore();
@@ -148,13 +148,13 @@ describe("#modules/scheduler", function() {
 
     mockFs({
       "./tmp_cron":
-        "Existing Cron Job Entry" + os.EOL + "gitpull" + os.EOL + "Another"
+        "Existing Cron Job Entry" + os.EOL + "auto-git-pull" + os.EOL + "Another"
     });
 
-    sut.maybeAppendJob("frequencyPattern", "gitpull");
+    sut.maybeAppendJob("frequencyPattern", "auto-git-pull");
 
     expect(readFileSync("./tmp_cron", { encoding: "utf8" })).to.equal(
-      "Existing Cron Job Entry" + os.EOL + "Another" + os.EOL + "gitpull"
+      "Existing Cron Job Entry" + os.EOL + "Another" + os.EOL + "auto-git-pull"
     );
 
     mockFs.restore();

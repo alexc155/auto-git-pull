@@ -33,7 +33,7 @@ function maybeAppendJob(frequencyPattern, job) {
   const newCurrentjobs = [];
 
   currentJobs.forEach(currentJob => {
-    if (currentJob.indexOf("gitpull") < 0) {
+    if (currentJob.indexOf("auto-git-pull") < 0) {
       newCurrentjobs.push(currentJob);
     }
   });
@@ -59,7 +59,7 @@ function addJobToCrontab(frequencyPattern, job) {
 
 function addWindowsScheduledTask(frequencyInMinutes, job, username, password) {
   execSync(
-    `schtasks /create /F /RU ${username} /RP ${password} /sc minute /mo ${frequencyInMinutes} /tn "gitpull" /tr "${job}"`
+    `schtasks /create /F /RU ${username} /RP ${password} /sc minute /mo ${frequencyInMinutes} /tn "auto-git-pull" /tr "${job}"`
   );
   log.infoConsole("");
   log.infoConsole("A Scheduled Task has been created.");
@@ -67,7 +67,7 @@ function addWindowsScheduledTask(frequencyInMinutes, job, username, password) {
     "However, it isn't possible to automate this task to run when the computer is not plugged in."
   );
   log.infoConsole(
-    "To fix this, find the task called gitpull in the task library, and do the following:"
+    "To fix this, find the task called auto-git-pull in the task library, and do the following:"
   );
   log.infoConsole("Right-click and choose Properties.");
   log.infoConsole(

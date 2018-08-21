@@ -43,9 +43,9 @@ function showHelp() {
     --help                    | -h
 
   Example usage:
-    $ gitpull -spd /Users/you/Documents/GitHub
-    $ gitpull -p
-    $ gitpull -pt
+    $ auto-git-pull -spd /Users/you/Documents/GitHub
+    $ auto-git-pull -p
+    $ auto-git-pull -pt
 
   Notes:
     * You must set a projects directory before fetching or pulling.

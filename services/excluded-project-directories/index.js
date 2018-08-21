@@ -12,7 +12,7 @@ function addExcludedProjectDirectory(path) {
   if (includedProjectDirectories.length > 0) {
     log.info("You can't have included *and* excluded project directories.");
     log.info("You need to remove all included project directories first.");
-    log.info("Use ` gitpull -ci ` to clear them all.");
+    log.info("Use ` auto-git-pull -ci ` to clear them all.");
     return [];
   }
 

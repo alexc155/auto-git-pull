@@ -1,5 +1,5 @@
 {
-  "name": "gitpull",
+  "name": "auto-git-pull",
   "version": "0.1.0",
   "description": "Schedules fetching all repos in a working folder from Git, and optionally pulls changes if there are no conflicts.",
   "main": "index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alexc155/gitpull.git"
+    "url": "git+https://github.com/alexc155/auto-git-pull.git"
   },
   "keywords": [
     "git",
@@ -23,9 +23,9 @@
   "author": "Alex Clark <ahclark@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/alexc155/gitpull/issues"
+    "url": "https://github.com/alexc155/auto-git-pull/issues"
   },
-  "homepage": "https://github.com/alexc155/gitpull#readme",
+  "homepage": "https://github.com/alexc155/auto-git-pull#readme",
   "devDependencies": {
     "chai": "^4.1.2",
     "coveralls": "^3.0.2",

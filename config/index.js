@@ -3,7 +3,7 @@
 const { existsSync, writeFileSync, readFileSync } = require("fs");
 const { log } = require("../utils");
 
-const CONFIG_FILE = `${__dirname.replace(/\\/g, "/")}/../gitpull.config`;
+const CONFIG_FILE = `${__dirname.replace(/\\/g, "/")}/../auto-git-pull.config`;
 
 function validateProjectsDirectory(path) {
   if (!existsSync(path)) {
