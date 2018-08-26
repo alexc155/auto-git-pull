@@ -18,6 +18,10 @@ module.exports = {
 
     error: function() {
       logger.errorSync(Array.from(arguments).join(" "), false);
+    },
+
+    showRecent: function(lines) {
+      console.log(logger.showRecent(lines));
     }
   }
 };

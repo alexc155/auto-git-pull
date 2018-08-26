@@ -6,7 +6,8 @@ const proxyquire = require("proxyquire").noPreserveCache();
 
 const mockLogger = {
   logSync: function() {},
-  errorSync: function() {}
+  errorSync: function() {},
+  showRecent: function() {}
 };
 
 const sut = proxyquire("./", {
@@ -47,6 +48,16 @@ describe("#utils", function() {
     sut.log.infoConsole("INFO");
 
     expect(console.log.calledWith("INFO")).to.equal(true);
+
+    console.log.restore();
+  });
+
+  it("shows recent logs", function() {
+    sinon.stub(console, "log");
+
+    sut.log.showRecent(10);
+
+    expect(console.log.called).to.equal(true);
 
     console.log.restore();
   });

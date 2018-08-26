@@ -12,6 +12,7 @@ const { log } = require("./utils");
 const { EOL } = require("os");
 const { writeFileSync } = require("fs");
 const path = require("path");
+const prettyjson = require("prettyjson");
 
 function showHelp() {
   console.log(`
@@ -40,6 +41,8 @@ function showHelp() {
     --show-excludes           | -sx
     --clear-excludes          | -cx
 
+    --show-logs               | -sl
+
     --help                    | -h
 
   Example usage:
@@ -65,8 +68,7 @@ function showHelp() {
 
 function main() {
   updateNotifier({
-    pkg,
-    updateCheckInterval: 0
+    pkg
   }).notify({
     isGlobal: true
   });
@@ -135,7 +137,10 @@ function main() {
     case "-s":
     case "--status":
       const statusResults = [...git.runStatusOnProjects()];
-      log.info(EOL, statusResults.join(EOL + " "));
+      log.infoConsole(
+        EOL,
+        prettyjson.render(statusResults).replace(/\"\"\"/g, "")
+      );
       break;
     case "-ai":
     case "--add-include":
@@ -240,6 +245,10 @@ function main() {
       if (scheduler.scheduleTask("-ps") > 0) {
         log.info(EOL, "OK");
       }
+      break;
+    case "--show-logs":
+    case "-sl":
+      log.showRecent(180);
       break;
     case "-h":
     case "--help":

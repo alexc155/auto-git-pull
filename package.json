@@ -1,6 +1,6 @@
 {
   "name": "auto-git-pull",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Schedules fetching all repos in a working folder from Git, and optionally pulls changes if there are no conflicts.",
   "main": "index.js",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "mocha $(find . -name '*.spec.js' ! -ipath '*node_modules*') --reporter spec",
-    "test:watch": "npm install && mocha $(find . -name '*.spec.js' ! -ipath '*node_modules*') --reporter min --watch",
+    "test:watch": "mocha $(find . -name '*.spec.js' ! -ipath '*node_modules*') --reporter min --watch",
     "cover": "node_modules/istanbul/lib/cli.js cover node_modules/mocha/bin/_mocha -- --reporter spec $(find . -name '*.spec.js' ! -ipath '*node_modules*')"
   },
   "repository": {
@@ -35,11 +35,12 @@
     "istanbul": "^0.4.5",
     "mocha": "^5.2.0",
     "mock-fs": "^4.6.0",
-    "proxyquire": "^2.0.1",
+    "proxyquire": "^2.1.0",
     "sinon": "^6.1.5"
   },
   "dependencies": {
-    "logger-rotate": "^0.3.1",
+    "logger-rotate": "^0.4.2",
+    "prettyjson": "^1.2.1",
     "readline-sync": "^1.4.9",
     "update-notifier": "^2.5.0"
   },
