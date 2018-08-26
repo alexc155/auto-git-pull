@@ -1,6 +1,6 @@
 {
   "name": "auto-git-pull",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Schedules fetching all repos in a working folder from Git, and optionally pulls changes if there are no conflicts.",
   "main": "index.js",
   "bin": {
@@ -39,7 +39,7 @@
     "sinon": "^6.1.5"
   },
   "dependencies": {
-    "logger-rotate": "^0.4.2",
+    "logger-rotate": "^0.4.3",
     "prettyjson": "^1.2.1",
     "readline-sync": "^1.4.9",
     "update-notifier": "^2.5.0"

@@ -54,6 +54,8 @@ $ auto-git-pull --set-projects-directory /absolute/path/to/projects
     --show-excludes           | -sx
     --clear-excludes          | -cx
 
+    --show-logs               | -sl
+
     --help                    | -h
 
 ### Example usage:
@@ -86,6 +88,8 @@ $ auto-git-pull --set-projects-directory /absolute/path/to/projects
 
 * A log of operations is kept in the `logs` directory at the root of the project.
 
+* To see the most recent logs, use the --show-logs switch
+
 ## Tests
 
 ```
@@ -102,3 +106,4 @@ Add unit tests for any new or changed functionality. Lint and test your code.
 - 0.1.0 Initial release.
 - 0.1.2 Fix bug in git where folder isn't a true repo
 - 0.2.0 Show recent logs
+- 0.2.1 Update logging dependency
