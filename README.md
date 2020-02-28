@@ -1,3 +1,5 @@
+[![NPM Version](https://img.shields.io/npm/v/auto-git-pull.svg?style=flat-square)](https://www.npmjs.com/package/auto-git-pull)
+[![NPM Downloads](https://img.shields.io/npm/dm/auto-git-pull.svg?style=flat-square)](https://www.npmjs.com/package/auto-git-pull)
 [![Build Status](https://travis-ci.org/alexc155/auto-git-pull.svg?branch=master)](https://travis-ci.org/alexc155/auto-git-pull)
 [![Coverage Status](https://coveralls.io/repos/github/alexc155/auto-git-pull/badge.svg?branch=master)](https://coveralls.io/github/alexc155/auto-git-pull?branch=master)
 [![dependencies Status](https://david-dm.org/alexc155/auto-git-pull/status.svg)](https://david-dm.org/alexc155/auto-git-pull)
